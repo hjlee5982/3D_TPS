@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: e2770e1f47a34b8469124966ee32dfa7
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 305180
+  packageName: CombatGirls_RifleCharacterPack
+  packageVersion: 1.0.3
+  assetPath: Assets/CombatGirlsCharacterPack/UI_&_environmental/UI_Resource/UI_Preset/UI_RifleGirl.prefab
+  uploadId: 746737
