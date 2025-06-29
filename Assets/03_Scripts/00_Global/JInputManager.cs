@@ -55,9 +55,11 @@ public class JInputManager : MonoBehaviour
     private InputAction Move;
     private InputAction Look;
     private InputAction Zoom;
+    private InputAction Dash;
     public  Action<Vector3> OnMove;
     public  Action<Vector2> OnLook;
-    public  Action<float> OnZoom;
+    public  Action<float>   OnZoom;
+    public  Action<bool>    OnDash;
 
     [Header("커스텀 인풋액션")]
     public Dictionary<string, RebindableInputAction> _inputActionDict = new Dictionary<string, RebindableInputAction>();
@@ -111,6 +113,7 @@ public class JInputManager : MonoBehaviour
         Move.Enable();
         Look.Enable();
         Zoom.Enable();
+        Dash.Enable();
 
         foreach(RebindableInputAction action in _inputActionDict.Values)
         {
@@ -125,6 +128,7 @@ public class JInputManager : MonoBehaviour
         Move.Disable();
         Look.Disable();
         Zoom.Disable();
+        Dash.Disable();
 
         foreach (RebindableInputAction action in _inputActionDict.Values)
         {
@@ -152,6 +156,9 @@ public class JInputManager : MonoBehaviour
             Zoom = InputActions.FindAction("Zoom");
             Zoom.canceled += ctx => OnZoom?.Invoke(0f);
 
+            Dash = InputActions.FindAction("Dash");
+            Dash.performed += ctx => OnDash?.Invoke(true);
+            Dash.canceled  += ctx => OnDash?.Invoke(false);
         }
         // 키세팅을 바꿀 수 있는 키들은 한번 감싸서 초기화
         {
@@ -178,11 +185,12 @@ public class JInputManager : MonoBehaviour
         }
     }
 
-    public void BindBasicMovement(Action<Vector3> move, Action<Vector2> look, Action<float> zoom)
+    public void BindBasicMovement(Action<Vector3> move, Action<Vector2> look, Action<float> zoom, Action<bool> dash)
     {
         OnMove += move;
         OnLook += look;
         OnZoom += zoom;
+        OnDash += dash;
     }
 
     public void BindKey(Action callback, string actionName)

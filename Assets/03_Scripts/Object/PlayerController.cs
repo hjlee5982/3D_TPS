@@ -48,6 +48,9 @@ public class PlayerController : MonoBehaviour
 
     [Header("조준 변수")]
     private bool _isAiming = false;
+
+    [Header("대시 변수")]
+    private float _dashFactor = 0;
     #endregion
 
 
@@ -86,7 +89,7 @@ public class PlayerController : MonoBehaviour
     #region FUNCTIONS
     private void BindInput()
     {
-        JInputManager.Instance.BindBasicMovement(OnMove, OnLook, OnZoom);
+        JInputManager.Instance.BindBasicMovement(OnMove, OnLook, OnZoom, OnDash);
 
         JInputManager.Instance.BindKey(OnJump,   "Jump");
         JInputManager.Instance.BindKey(OnAiming, "Aiming");
@@ -134,7 +137,7 @@ public class PlayerController : MonoBehaviour
     {
         // _currentMagnitude = Mathf.Lerp(_currentMagnitude, _targetMagnitude, Time.deltaTime * t);
 
-        _animator.SetFloat("Speed", _targetMagnitude, 0.1f, Time.deltaTime);
+        _animator.SetFloat("Speed", _targetMagnitude + _dashFactor, 0.1f, Time.deltaTime);
         _animator.SetFloat("AimingMoveX", _moveDir.x, 0.1f, Time.deltaTime);
         _animator.SetFloat("AimingMoveZ", _moveDir.z, 0.1f, Time.deltaTime);
     }
@@ -193,6 +196,13 @@ public class PlayerController : MonoBehaviour
         }
 
         _animator.SetBool("IsAiming", _isAiming);
+    }
+
+    private void OnDash(bool isDash)
+    {
+        Debug.Log("Dash 입력 : "+isDash.ToString());
+
+        _dashFactor = isDash == true ? 2f : 0f;
     }
 
     private void OnJump()
