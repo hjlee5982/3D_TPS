@@ -56,10 +56,16 @@ public class JInputManager : MonoBehaviour
     private InputAction Look;
     private InputAction Zoom;
     private InputAction Dash;
+    private InputAction Walk;
+    private InputAction Jump;
+    private InputAction Aimm;
     public  Action<Vector3> OnMove;
     public  Action<Vector2> OnLook;
     public  Action<float>   OnZoom;
     public  Action<bool>    OnDash;
+    public  Action<bool>    OnWalk;
+    public  Action          OnJump;
+    public  Action          OnAimm;
 
     [Header("커스텀 인풋액션")]
     public Dictionary<string, RebindableInputAction> _inputActionDict = new Dictionary<string, RebindableInputAction>();
@@ -114,6 +120,8 @@ public class JInputManager : MonoBehaviour
         Look.Enable();
         Zoom.Enable();
         Dash.Enable();
+        Walk.Enable();
+        Jump.Enable();
 
         foreach(RebindableInputAction action in _inputActionDict.Values)
         {
@@ -129,6 +137,8 @@ public class JInputManager : MonoBehaviour
         Look.Disable();
         Zoom.Disable();
         Dash.Disable();
+        Walk.Disable();
+        Jump.Disable();
 
         foreach (RebindableInputAction action in _inputActionDict.Values)
         {
@@ -159,6 +169,16 @@ public class JInputManager : MonoBehaviour
             Dash = InputActions.FindAction("Dash");
             Dash.performed += ctx => OnDash?.Invoke(true);
             Dash.canceled  += ctx => OnDash?.Invoke(false);
+
+            Walk = InputActions.FindAction("Walk");
+            Walk.performed += ctx => OnWalk?.Invoke(true);
+            Walk.canceled  += ctx => OnWalk?.Invoke(false);
+
+            Jump = InputActions.FindAction("Jump");
+            Jump.performed += ctx => OnJump?.Invoke();
+
+            Aimm = InputActions.FindAction("Aiming");
+            Aimm.performed += ctx => OnAimm?.Invoke();
         }
         // 키세팅을 바꿀 수 있는 키들은 한번 감싸서 초기화
         {
@@ -185,12 +205,18 @@ public class JInputManager : MonoBehaviour
         }
     }
 
-    public void BindBasicMovement(Action<Vector3> move, Action<Vector2> look, Action<float> zoom, Action<bool> dash)
+    public void BindBasicPlayerMovement(Action<Vector3> move, Action<bool> dash, Action<bool> walk, Action jump, Action aimm)
     {
         OnMove += move;
+        OnDash += dash;
+        OnWalk += walk;
+        OnAimm += aimm;
+    }
+
+    public void BindBasicCameraMovement(Action<Vector2> look, Action<float> zoom)
+    {
         OnLook += look;
         OnZoom += zoom;
-        OnDash += dash;
     }
 
     public void BindKey(Action callback, string actionName)
