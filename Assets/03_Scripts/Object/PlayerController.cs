@@ -1,5 +1,6 @@
 using UnityEngine;
 using VFavorites.Libs;
+using VInspector;
 
 public class PlayerController : MonoBehaviour
 {
@@ -51,10 +52,10 @@ public class PlayerController : MonoBehaviour
     private float _targetDistance  = 0f; // 카메라가 가야 할 위치
 
     [Header("조준 변수")]
-    public Transform Spine;
+    private Transform _spine; // 위, 아래 조준 애니메이션이 없어서 허리를 x축으로 회전시킴
+    private Transform _rifle; // 위처럼 회전하면 총은 그대로여서 같이 회전시켜주려고 추가함
     private bool _isAiming = false;
-
-
+    
     [Header("걷기 변수")]
     public float WalkSpeed = 1f;
 
@@ -77,6 +78,9 @@ public class PlayerController : MonoBehaviour
 
         _currentDistance  = _targetDistance = Mathf.Abs(PlayerCamera.transform.position.z);
         _targetRotation   = Quaternion.identity;
+
+        _spine = transform.Find("spine_01");
+        _rifle = transform.Find("add_weapon_r");
     }
 
     private void Start()
@@ -91,6 +95,9 @@ public class PlayerController : MonoBehaviour
     private void LateUpdate()
     {
         UpdateTransform();
+
+        UpdateCameraRaycasting();
+
         UpdatePlayerAnimation();
     }
     #endregion
@@ -130,22 +137,39 @@ public class PlayerController : MonoBehaviour
 
                     transform.position += _moveDir * Time.deltaTime * MoveSpeed;
                     transform.rotation = Quaternion.Euler(0f, _yaw, 0f);
-
-                    Quaternion originalRotation = Spine.rotation;
-
-                    Vector3 worldRight = transform.right;
-                    Quaternion pitchRotation = Quaternion.AngleAxis(_pitch, worldRight);
-                    Spine.rotation = pitchRotation * originalRotation;
-
+                }
+                // 카메라 위치, 회전 변경
+                {
                     Vector3 offset = Quaternion.Euler(_pitch, _yaw, 0f) * new Vector3(0, 0, -(_aimingLook.position - _aimingPos.position).magnitude);
 
                     _aimingPos.position = _aimingLook.position + offset;
                     _aimingPos.transform.LookAt(_aimingLook.position);
-                }
-                // 카메라 위치, 회전 변경
-                {
+
                     PlayerCamera.transform.position = _aimingPos.position;
                     PlayerCamera.transform.rotation = _aimingPos.rotation;
+                }
+
+                // 공통 회전 변수
+                Vector3    worldRight = transform.right;
+                Quaternion pitchRotation = Quaternion.AngleAxis(_pitch, worldRight);
+
+                // Spine 회전
+                {
+                    Quaternion originalSpineRotation = _spine.rotation;
+
+                    _spine.rotation = pitchRotation * originalSpineRotation;
+                }
+                // Rifle 회전
+                {
+                    Quaternion originalRifleRotation = _rifle.rotation;
+
+                    _rifle.rotation = pitchRotation * originalRifleRotation;
+
+                    float mag = (_rifle.position - _spine.position).magnitude;
+
+                    Vector3 ro = Quaternion.Euler(_pitch, _yaw, 0f) * new Vector3(mag - 0.24f, mag - 0.04f, mag - 0.18f);
+
+                    _rifle.position = _spine.position + ro;
                 }
                 break;
 
@@ -202,6 +226,26 @@ public class PlayerController : MonoBehaviour
         _animator.SetBool("IsAiming", _playerState == EPlayerState.Aiming);
 
         _animator.speed = _playerState == EPlayerState.Dash ? 1.5f : 1f;
+    }
+
+    private void UpdateCameraRaycasting()
+    {
+        Ray ray = new Ray(PlayerCamera.transform.position, _lookAtPos.position - PlayerCamera.transform.position);
+
+        float dist = (_lookAtPos.position - PlayerCamera.transform.position).magnitude;
+
+        int layerMask = LayerMask.GetMask("Obstacle");
+
+        if(Physics.Raycast(ray, out RaycastHit hit, dist, layerMask) == true)
+        {
+            Debug.Log("충돌 : " + hit.transform.name);
+        }
+    }
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.red;
+        Gizmos.DrawRay(PlayerCamera.transform.position, _lookAtPos.position - PlayerCamera.transform.position);
     }
 
     private void OnMove(Vector3 dir)
