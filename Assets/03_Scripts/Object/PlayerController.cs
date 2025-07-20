@@ -79,8 +79,8 @@ public class PlayerController : MonoBehaviour
         _currentDistance  = _targetDistance = Mathf.Abs(PlayerCamera.transform.position.z);
         _targetRotation   = Quaternion.identity;
 
-        _spine = transform.Find("spine_01");
-        _rifle = transform.Find("add_weapon_r");
+        _spine = transform.Find("root/pelvis/spine_01");
+        _rifle = transform.Find("root/add_weapon_r");
     }
 
     private void Start()
