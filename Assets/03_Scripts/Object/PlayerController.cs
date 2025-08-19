@@ -1,4 +1,6 @@
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.InputSystem.XR;
 using VFavorites.Libs;
 using VInspector;
 
@@ -61,6 +63,12 @@ public class PlayerController : MonoBehaviour
 
     [Header("대시 변수")]
     public float DashSpeed = 5f;
+
+    [Header("캐릭터 컨트롤러")]
+    private CharacterController _controller;
+    public Vector3 velocity;
+    public float gravity = -9.81f;
+    public float jumpHeight = 2f;
     #endregion
 
 
@@ -81,6 +89,8 @@ public class PlayerController : MonoBehaviour
 
         _spine = transform.Find("root/pelvis/spine_01");
         _rifle = transform.Find("root/add_weapon_r");
+
+        _controller = transform.GetComponent<CharacterController>();
     }
 
     private void Start()
@@ -116,7 +126,9 @@ public class PlayerController : MonoBehaviour
                 {
                     _currentSpeed = MoveSpeed;
 
-                    transform.position += _moveDir * Time.deltaTime * MoveSpeed;
+                    //transform.position += _moveDir * Time.deltaTime * MoveSpeed;
+                    _controller.Move(_moveDir * Time.deltaTime * MoveSpeed);
+
                     transform.rotation = Quaternion.Slerp(transform.rotation, _targetRotation, Time.deltaTime * 20f);
                 }
                 // 카메라 위치, 회전 변경
@@ -135,7 +147,9 @@ public class PlayerController : MonoBehaviour
                 {
                     _currentSpeed = MoveSpeed;
 
-                    transform.position += _moveDir * Time.deltaTime * MoveSpeed;
+                    //transform.position += _moveDir * Time.deltaTime * MoveSpeed;
+                    _controller.Move(_moveDir * Time.deltaTime * MoveSpeed);
+
                     transform.rotation = Quaternion.Euler(0f, _yaw, 0f);
                 }
                 // 카메라 위치, 회전 변경
@@ -178,7 +192,9 @@ public class PlayerController : MonoBehaviour
                 {
                     _currentSpeed = DashSpeed;
 
-                    transform.position += _moveDir * Time.deltaTime * DashSpeed;
+                    //transform.position += _moveDir * Time.deltaTime * DashSpeed;
+                    _controller.Move(_moveDir * Time.deltaTime * DashSpeed);
+
                     transform.rotation = Quaternion.Slerp(transform.rotation, _targetRotation, Time.deltaTime * 20f);
                 }
                 // 카메라 위치, 회전 변경
@@ -197,7 +213,9 @@ public class PlayerController : MonoBehaviour
                 {
                     _currentSpeed = WalkSpeed;
 
-                    transform.position += _moveDir * Time.deltaTime * WalkSpeed;
+                    //transform.position += _moveDir * Time.deltaTime * WalkSpeed;
+                    _controller.Move(_moveDir * Time.deltaTime * WalkSpeed);
+
                     transform.rotation = Quaternion.Slerp(transform.rotation, _targetRotation, Time.deltaTime * 20f);
                 }
                 // 카메라 위치, 회전 변경
@@ -214,6 +232,16 @@ public class PlayerController : MonoBehaviour
             case EPlayerState.Jump:
                 break;
         }
+
+        // 바닥 체크 (isGrounded는 CC가 제공하는 속성)
+        if (_controller.isGrounded && velocity.y < 0)
+        {
+            velocity.y = -2f; // 바닥에 붙어 있게 약간 음수 유지
+        }
+
+        // 중력 적용
+        velocity.y += gravity * Time.deltaTime;
+        _controller.Move(velocity * Time.deltaTime);
     }
 
     private void UpdatePlayerAnimation()
@@ -240,12 +268,6 @@ public class PlayerController : MonoBehaviour
         {
             Debug.Log("충돌 : " + hit.transform.name);
         }
-    }
-
-    private void OnDrawGizmos()
-    {
-        Gizmos.color = Color.red;
-        Gizmos.DrawRay(PlayerCamera.transform.position, _lookAtPos.position - PlayerCamera.transform.position);
     }
 
     private void OnMove(Vector3 dir)
