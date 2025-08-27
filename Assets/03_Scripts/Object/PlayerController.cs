@@ -258,15 +258,28 @@ public class PlayerController : MonoBehaviour
 
     private void UpdateCameraRaycasting()
     {
-        Ray ray = new Ray(PlayerCamera.transform.position, _lookAtPos.position - PlayerCamera.transform.position);
+        //Ray ray = new Ray(PlayerCamera.transform.position, _lookAtPos.position - PlayerCamera.transform.position);
 
-        float dist = (_lookAtPos.position - PlayerCamera.transform.position).magnitude;
+        //float dist = (_lookAtPos.position - PlayerCamera.transform.position).magnitude;
+
+        //int layerMask = LayerMask.GetMask("Obstacle");
+
+        //if(Physics.Raycast(ray, out RaycastHit hit, dist, layerMask) == true)
+        //{
+        //    Debug.Log("충돌 : " + hit.transform.name);
+        //}
+
+        // 캐릭터에서 카메라로 Ray를 쏴야 오브젝트 두께를 고려 할 필요가 없음
+        Vector3 dir = PlayerCamera.transform.position - _lookAtPos.position;
+        Ray ray = new Ray(_lookAtPos.position, dir);
+
+        float dist = dir.magnitude;
 
         int layerMask = LayerMask.GetMask("Obstacle");
 
         if(Physics.Raycast(ray, out RaycastHit hit, dist, layerMask) == true)
         {
-            Debug.Log("충돌 : " + hit.transform.name);
+            PlayerCamera.transform.position = _lookAtPos.position + dir.normalized * (hit.distance - 0.2f);
         }
     }
 
