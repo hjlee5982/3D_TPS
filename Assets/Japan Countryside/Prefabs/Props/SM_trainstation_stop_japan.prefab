@@ -49,28 +49,32 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -7511558181221131132, guid: 4937d93fe4926ed4db09ceb9a87e081a, type: 3}
-      propertyPath: m_Materials.Array.data[0]
+      propertyPath: 'm_Materials.Array.data[0]'
       value: 
       objectReference: {fileID: 2100000, guid: 9e0baf52baea0d04484341c49165f5cd, type: 2}
     - target: {fileID: -7511558181221131132, guid: 4937d93fe4926ed4db09ceb9a87e081a, type: 3}
-      propertyPath: m_Materials.Array.data[1]
+      propertyPath: 'm_Materials.Array.data[1]'
       value: 
       objectReference: {fileID: 2100000, guid: 322a63236c9b8f14f8fe91cfad8d66d8, type: 2}
     - target: {fileID: -7511558181221131132, guid: 4937d93fe4926ed4db09ceb9a87e081a, type: 3}
-      propertyPath: m_Materials.Array.data[2]
+      propertyPath: 'm_Materials.Array.data[2]'
       value: 
       objectReference: {fileID: 2100000, guid: aec1af8928e968840bad3441582b0a70, type: 2}
     - target: {fileID: -7511558181221131132, guid: 4937d93fe4926ed4db09ceb9a87e081a, type: 3}
-      propertyPath: m_Materials.Array.data[3]
+      propertyPath: 'm_Materials.Array.data[3]'
       value: 
       objectReference: {fileID: 2100000, guid: 77bd1973176ad5e459519a62a2b0764b, type: 2}
     - target: {fileID: -7511558181221131132, guid: 4937d93fe4926ed4db09ceb9a87e081a, type: 3}
-      propertyPath: m_Materials.Array.data[4]
+      propertyPath: 'm_Materials.Array.data[4]'
       value: 
       objectReference: {fileID: 2100000, guid: a65496f67a5d30d4386a89497bce4405, type: 2}
     - target: {fileID: 919132149155446097, guid: 4937d93fe4926ed4db09ceb9a87e081a, type: 3}
       propertyPath: m_Name
       value: SM_trainstation_stop_japan
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 4937d93fe4926ed4db09ceb9a87e081a, type: 3}
+      propertyPath: m_Layer
+      value: 7
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

@@ -49,28 +49,32 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -7511558181221131132, guid: 9ea90c66ed68b054aac4d91bbb0a2942, type: 3}
-      propertyPath: m_Materials.Array.data[0]
+      propertyPath: 'm_Materials.Array.data[0]'
       value: 
       objectReference: {fileID: 2100000, guid: dd95b4ed7590e9b41be0e64da6f05e9d, type: 2}
     - target: {fileID: -7511558181221131132, guid: 9ea90c66ed68b054aac4d91bbb0a2942, type: 3}
-      propertyPath: m_Materials.Array.data[1]
+      propertyPath: 'm_Materials.Array.data[1]'
       value: 
       objectReference: {fileID: 2100000, guid: 38dac4d34d494ce4d8364d4a9ba57026, type: 2}
     - target: {fileID: -7511558181221131132, guid: 9ea90c66ed68b054aac4d91bbb0a2942, type: 3}
-      propertyPath: m_Materials.Array.data[2]
+      propertyPath: 'm_Materials.Array.data[2]'
       value: 
       objectReference: {fileID: 2100000, guid: c4f468c403f410243be94171f538ee19, type: 2}
     - target: {fileID: -7511558181221131132, guid: 9ea90c66ed68b054aac4d91bbb0a2942, type: 3}
-      propertyPath: m_Materials.Array.data[3]
+      propertyPath: 'm_Materials.Array.data[3]'
       value: 
       objectReference: {fileID: 2100000, guid: fca016565193ed746ab3fff31d25ccc9, type: 2}
     - target: {fileID: -7511558181221131132, guid: 9ea90c66ed68b054aac4d91bbb0a2942, type: 3}
-      propertyPath: m_Materials.Array.data[4]
+      propertyPath: 'm_Materials.Array.data[4]'
       value: 
       objectReference: {fileID: 2100000, guid: 9c84d8147b3798143a4e94ae590c05be, type: 2}
     - target: {fileID: 919132149155446097, guid: 9ea90c66ed68b054aac4d91bbb0a2942, type: 3}
       propertyPath: m_Name
       value: SM_house_japan_08 (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 9ea90c66ed68b054aac4d91bbb0a2942, type: 3}
+      propertyPath: m_Layer
+      value: 7
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

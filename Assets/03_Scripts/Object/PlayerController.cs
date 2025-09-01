@@ -279,7 +279,19 @@ public class PlayerController : MonoBehaviour
 
         if(Physics.Raycast(ray, out RaycastHit hit, dist, layerMask) == true)
         {
-            PlayerCamera.transform.position = _lookAtPos.position + dir.normalized * (hit.distance - 0.2f);
+            // 캐릭터와 카메라 사이에 무언가 있을 경우
+            PlayerCamera.transform.position = _lookAtPos.position + dir.normalized * (hit.distance - 0.4f);
+        }
+
+        // 카메라 근접 투명처리
+        float adjustedDist = (_lookAtPos.position - PlayerCamera.transform.position).magnitude;
+        if(adjustedDist <= 0.7f)
+        {
+            PlayerCamera.cullingMask &= ~(1 << LayerMask.NameToLayer("Player"));
+        }
+        else
+        {
+            PlayerCamera.cullingMask |= (1 << LayerMask.NameToLayer("Player"));
         }
     }
 

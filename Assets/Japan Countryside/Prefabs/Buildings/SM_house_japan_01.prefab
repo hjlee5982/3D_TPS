@@ -49,36 +49,40 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -7511558181221131132, guid: a829f0e9b6f1eb2419b52a404038ee5d, type: 3}
-      propertyPath: m_Materials.Array.data[0]
+      propertyPath: 'm_Materials.Array.data[0]'
       value: 
       objectReference: {fileID: 2100000, guid: fca016565193ed746ab3fff31d25ccc9, type: 2}
     - target: {fileID: -7511558181221131132, guid: a829f0e9b6f1eb2419b52a404038ee5d, type: 3}
-      propertyPath: m_Materials.Array.data[1]
+      propertyPath: 'm_Materials.Array.data[1]'
       value: 
       objectReference: {fileID: 2100000, guid: 8a8126f569ef46c4f99f7a1317f5dcce, type: 2}
     - target: {fileID: -7511558181221131132, guid: a829f0e9b6f1eb2419b52a404038ee5d, type: 3}
-      propertyPath: m_Materials.Array.data[2]
+      propertyPath: 'm_Materials.Array.data[2]'
       value: 
       objectReference: {fileID: 2100000, guid: 43e4514c8b75ed24b9a023ed2001a9a8, type: 2}
     - target: {fileID: -7511558181221131132, guid: a829f0e9b6f1eb2419b52a404038ee5d, type: 3}
-      propertyPath: m_Materials.Array.data[3]
+      propertyPath: 'm_Materials.Array.data[3]'
       value: 
       objectReference: {fileID: 2100000, guid: 322a63236c9b8f14f8fe91cfad8d66d8, type: 2}
     - target: {fileID: -7511558181221131132, guid: a829f0e9b6f1eb2419b52a404038ee5d, type: 3}
-      propertyPath: m_Materials.Array.data[4]
+      propertyPath: 'm_Materials.Array.data[4]'
       value: 
       objectReference: {fileID: 2100000, guid: c4f468c403f410243be94171f538ee19, type: 2}
     - target: {fileID: -7511558181221131132, guid: a829f0e9b6f1eb2419b52a404038ee5d, type: 3}
-      propertyPath: m_Materials.Array.data[5]
+      propertyPath: 'm_Materials.Array.data[5]'
       value: 
       objectReference: {fileID: 2100000, guid: aec1af8928e968840bad3441582b0a70, type: 2}
     - target: {fileID: -7511558181221131132, guid: a829f0e9b6f1eb2419b52a404038ee5d, type: 3}
-      propertyPath: m_Materials.Array.data[6]
+      propertyPath: 'm_Materials.Array.data[6]'
       value: 
       objectReference: {fileID: 2100000, guid: 05eba611a0278654eb1e0ed140ada069, type: 2}
     - target: {fileID: 919132149155446097, guid: a829f0e9b6f1eb2419b52a404038ee5d, type: 3}
       propertyPath: m_Name
       value: SM_house_japan_01
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: a829f0e9b6f1eb2419b52a404038ee5d, type: 3}
+      propertyPath: m_Layer
+      value: 7
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

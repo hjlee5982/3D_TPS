@@ -49,20 +49,24 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -7511558181221131132, guid: 80349e80360c49a4f8d77de76c9ce558, type: 3}
-      propertyPath: m_Materials.Array.data[0]
+      propertyPath: 'm_Materials.Array.data[0]'
       value: 
       objectReference: {fileID: 2100000, guid: fef53a996a2ec7c4c8d4649dc3efd0e1, type: 2}
     - target: {fileID: -7511558181221131132, guid: 80349e80360c49a4f8d77de76c9ce558, type: 3}
-      propertyPath: m_Materials.Array.data[1]
+      propertyPath: 'm_Materials.Array.data[1]'
       value: 
       objectReference: {fileID: 2100000, guid: d121a6d259eb76e47981c6208f3bcbb7, type: 2}
     - target: {fileID: -7511558181221131132, guid: 80349e80360c49a4f8d77de76c9ce558, type: 3}
-      propertyPath: m_Materials.Array.data[2]
+      propertyPath: 'm_Materials.Array.data[2]'
       value: 
       objectReference: {fileID: 2100000, guid: a8ae33cc30d61cf49af71da51094fb13, type: 2}
     - target: {fileID: 919132149155446097, guid: 80349e80360c49a4f8d77de76c9ce558, type: 3}
       propertyPath: m_Name
       value: SM_yatai_taiyaki
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 80349e80360c49a4f8d77de76c9ce558, type: 3}
+      propertyPath: m_Layer
+      value: 7
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
