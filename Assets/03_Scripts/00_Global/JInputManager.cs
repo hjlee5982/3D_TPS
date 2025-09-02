@@ -210,6 +210,7 @@ public class JInputManager : MonoBehaviour
         OnMove += move;
         OnDash += dash;
         OnWalk += walk;
+        OnJump += jump;
         OnAimm += aimm;
     }
 

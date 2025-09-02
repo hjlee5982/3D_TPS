@@ -20493,7 +20493,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1813209206243997795}
   m_Layer: 6
-  m_Name: LookAtPosition
+  m_Name: CameraLookTarget
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -34574,7 +34574,7 @@ GameObject:
   - component: {fileID: 6476949168034075628}
   - component: {fileID: 1038571721829565569}
   m_Layer: 6
-  m_Name: AimingLook
+  m_Name: AimLookTarget
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -40115,7 +40115,7 @@ GameObject:
   - component: {fileID: 789084194908899939}
   - component: {fileID: 7775846741199717185}
   - component: {fileID: 8934404495770258315}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Terrain
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -46022,7 +46022,7 @@ GameObject:
   - component: {fileID: 1763721294818287170}
   - component: {fileID: 8723377767345795804}
   m_Layer: 6
-  m_Name: AimingPosition
+  m_Name: AimCameraPosition
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -60008,13 +60008,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   PlayerCamera: {fileID: 5127371725552482600}
   MoveSpeed: 3
-  MouseMoveSpeed: 0.12
-  MouseWheelSpeed: 0.5
+  WalkSpeed: 1
+  DashSpeed: 5
+  MouseMoveSensitivity: 0.12
+  MouseWheelSensitivity: 0.5
   ZoomLerpSpeed: 3
   MinDistance: 1
   MaxDistance: 4
-  WalkSpeed: 1
-  DashSpeed: 5
   velocity: {x: 0, y: 0, z: 0}
   gravity: -9.81
   jumpHeight: 2
