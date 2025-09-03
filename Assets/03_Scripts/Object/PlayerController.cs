@@ -107,7 +107,7 @@ public class PlayerController : MonoBehaviour
     {
         // 인풋 바인딩
         {
-            JInputManager.Instance.BindBasicPlayerMovement(OnMove, OnDash, OnWalk, OnJump, OnAiming);
+            JInputManager.Instance.BindBasicPlayerMovement(OnMove, OnDash, OnWalk, OnJump, OnAiming, OnShot);
             JInputManager.Instance.BindBasicCameraMovement(OnLook, OnZoom);
         }
     }
@@ -156,13 +156,13 @@ public class PlayerController : MonoBehaviour
                     _spine.rotation = pitchRotation * _spine.rotation;
 
                     // Rifle 회전
-                    _rifle.rotation = pitchRotation * _rifle.rotation;
+                    //_rifle.rotation = pitchRotation * _rifle.rotation;
 
-                    float mag = (_rifle.position - _spine.position).magnitude;
+                    //float mag = (_rifle.position - _spine.position).magnitude;
 
-                    Vector3 ro = Quaternion.Euler(_amingPitch, _yaw, 0f) * new Vector3(mag - 0.24f, mag - 0.04f, mag - 0.18f);
+                    //Vector3 ro = Quaternion.Euler(_amingPitch, _yaw, 0f) * new Vector3(mag - 0.24f, mag - 0.04f, mag - 0.18f);
 
-                    _rifle.position = _spine.position + ro;
+                    //_rifle.position = _spine.position + ro;
                 }
                
                 break;
@@ -224,11 +224,10 @@ public class PlayerController : MonoBehaviour
     {
         _animator.SetFloat("Speed", _currentSpeed * _isRun, 0.1f, Time.deltaTime);
 
-        _animator.SetFloat("AimingMoveX", _moveDir.x, 0.1f, Time.deltaTime);
-        _animator.SetFloat("AimingMoveZ", _moveDir.z, 0.1f, Time.deltaTime);
+        // _animator.SetFloat("AimingMoveX", _moveDir.x, 0.1f, Time.deltaTime);
+        // _animator.SetFloat("AimingMoveZ", _moveDir.z, 0.1f, Time.deltaTime);
 
         _animator.SetBool("IsAiming", _playerState == EPlayerState.Aiming);
-        _animator.SetBool("IsJump", _playerState == EPlayerState.Jump);
 
         _animator.speed = _currentSpeed == DashSpeed ? 1.5f : 1f;
     }
@@ -347,6 +346,14 @@ public class PlayerController : MonoBehaviour
         if (_controller.isGrounded == true)
         {
             _velocity.y = Mathf.Sqrt(_jumpHeight * -2f * _gravity);
+        }
+    }
+
+    private void OnShot()
+    {
+        if(_playerState == EPlayerState.Aiming)
+        {
+            _animator.Play("AimIdle_Shoot", 1, 0f);
         }
     }
     #endregion

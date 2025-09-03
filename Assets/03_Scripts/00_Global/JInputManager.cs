@@ -59,6 +59,7 @@ public class JInputManager : MonoBehaviour
     private InputAction Walk;
     private InputAction Jump;
     private InputAction Aimm;
+    private InputAction Shot;
     public  Action<Vector3> OnMove;
     public  Action<Vector2> OnLook;
     public  Action<float>   OnZoom;
@@ -66,6 +67,7 @@ public class JInputManager : MonoBehaviour
     public  Action<bool>    OnWalk;
     public  Action          OnJump;
     public  Action          OnAimm;
+    public  Action          OnShot;
 
     [Header("커스텀 인풋액션")]
     public Dictionary<string, RebindableInputAction> _inputActionDict = new Dictionary<string, RebindableInputAction>();
@@ -122,6 +124,7 @@ public class JInputManager : MonoBehaviour
         Dash.Enable();
         Walk.Enable();
         Jump.Enable();
+        Shot.Enable();
 
         foreach(RebindableInputAction action in _inputActionDict.Values)
         {
@@ -139,6 +142,7 @@ public class JInputManager : MonoBehaviour
         Dash.Disable();
         Walk.Disable();
         Jump.Disable();
+        Shot.Disable();
 
         foreach (RebindableInputAction action in _inputActionDict.Values)
         {
@@ -179,6 +183,9 @@ public class JInputManager : MonoBehaviour
 
             Aimm = InputActions.FindAction("Aiming");
             Aimm.performed += ctx => OnAimm?.Invoke();
+
+            Shot = InputActions.FindAction("Shot");
+            Shot.performed += ctx => OnShot?.Invoke();
         }
         // 키세팅을 바꿀 수 있는 키들은 한번 감싸서 초기화
         {
@@ -205,13 +212,14 @@ public class JInputManager : MonoBehaviour
         }
     }
 
-    public void BindBasicPlayerMovement(Action<Vector3> move, Action<bool> dash, Action<bool> walk, Action jump, Action aimm)
+    public void BindBasicPlayerMovement(Action<Vector3> move, Action<bool> dash, Action<bool> walk, Action jump, Action aimm, Action shot)
     {
         OnMove += move;
         OnDash += dash;
         OnWalk += walk;
         OnJump += jump;
         OnAimm += aimm;
+        OnShot += shot;
     }
 
     public void BindBasicCameraMovement(Action<Vector2> look, Action<float> zoom)
