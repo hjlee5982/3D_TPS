@@ -16,7 +16,7 @@ public class JLayerSync : MonoBehaviour
         {
             if(go.name == "SM_platform_japan_01")
             {
-                int a = 0;
+                // int a = 0;
             }
 
             GameObject prefab = PrefabUtility.GetCorrespondingObjectFromOriginalSource(go);

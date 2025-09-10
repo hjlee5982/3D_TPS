@@ -69,6 +69,11 @@ public class JInputManager : MonoBehaviour
     public  Action          OnAimm;
     public  Action          OnShot;
 
+    [Header("홀딩 인풋 플래그")]
+    private bool  _isHolding     = false;
+    private float _interval      = 0.1f;
+    private float _nextInputTime = 0f;
+    
     [Header("커스텀 인풋액션")]
     public Dictionary<string, RebindableInputAction> _inputActionDict = new Dictionary<string, RebindableInputAction>();
     #endregion
@@ -111,6 +116,12 @@ public class JInputManager : MonoBehaviour
         if (zoom != 0f)
         {
             OnZoom?.Invoke(zoom);
+        }
+
+        if(_isHolding == true && Time.time >= _nextInputTime)
+        {
+            OnShot?.Invoke();
+            _nextInputTime = Time.time + _interval;
         }
     }
 
@@ -185,7 +196,10 @@ public class JInputManager : MonoBehaviour
             Aimm.performed += ctx => OnAimm?.Invoke();
 
             Shot = InputActions.FindAction("Shot");
-            Shot.performed += ctx => OnShot?.Invoke();
+            // Shot.performed += ctx => OnShot?.Invoke();
+
+            Shot.started  += ctx => _isHolding = true;
+            Shot.canceled += ctx => _isHolding = false;
         }
         // 키세팅을 바꿀 수 있는 키들은 한번 감싸서 초기화
         {
@@ -212,14 +226,19 @@ public class JInputManager : MonoBehaviour
         }
     }
 
-    public void BindBasicPlayerMovement(Action<Vector3> move, Action<bool> dash, Action<bool> walk, Action jump, Action aimm, Action shot)
+    public void BindBasicPlayerMovement(Action<Vector3> move, Action<bool> dash, Action<bool> walk, Action jump, Action aimm)
     {
         OnMove += move;
         OnDash += dash;
         OnWalk += walk;
         OnJump += jump;
         OnAimm += aimm;
-        OnShot += shot;
+    }
+
+    public void BindHoldingAction(Action hold, float interval)
+    {
+        OnShot += hold;
+        _interval = interval;
     }
 
     public void BindBasicCameraMovement(Action<Vector2> look, Action<float> zoom)
