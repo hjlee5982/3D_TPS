@@ -1,3 +1,4 @@
+using TreeEditor;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem.XR;
@@ -80,8 +81,8 @@ public class PlayerController : MonoBehaviour
     #endregion
 
 
-    
 
+     
 
     #region MONOBEHAVIOUR
     private void Awake()
@@ -156,13 +157,12 @@ public class PlayerController : MonoBehaviour
                     _spine.rotation = pitchRotation * _spine.rotation;
 
                     // Rifle 회전
-                    //_rifle.rotation = pitchRotation * _rifle.rotation;
+                    _rifle.rotation = pitchRotation * _rifle.rotation;
 
-                    //float mag = (_rifle.position - _spine.position).magnitude;
-
-                    //Vector3 ro = Quaternion.Euler(_amingPitch, _yaw, 0f) * new Vector3(mag - 0.24f, mag - 0.04f, mag - 0.18f);
-
-                    //_rifle.position = _spine.position + ro;
+                    // Rifle 위치 보정
+                    Vector3 localOffset = _rifle.position - _spine.position;
+                    Vector3 rotateOffset = pitchRotation * localOffset;
+                    _rifle.position = _spine.position + rotateOffset;
                 }
                
                 break;
