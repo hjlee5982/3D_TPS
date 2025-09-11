@@ -5923,6 +5923,8 @@ MonoBehaviour:
   ZoomLerpSpeed: 3
   MinDistance: 1
   MaxDistance: 4
+  RifleRecoilRate: 25
+  CameraRecoilRate: 0.05
 --- !u!143 &4323362595686696289
 CharacterController:
   m_ObjectHideFlags: 0

@@ -1,3 +1,5 @@
+using System.Collections;
+using System.Runtime.CompilerServices;
 using TreeEditor;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -71,6 +73,7 @@ public class PlayerController : MonoBehaviour
     private bool _isAiming = false;
     private float _amingPitch      = 0;
     private float _amingPitchClamp = 45f;
+    private float _aimDistance = 0f;
 
 
     [Header("캐릭터 컨트롤러")]
@@ -81,12 +84,19 @@ public class PlayerController : MonoBehaviour
 
     [Header("총알 생성 위치")]
     private Transform _shotPoint;
+
+    [Header("카메라 흔들림 오프셋")]
+    private Vector3 _cameraShakeOffset      = Vector3.zero;
+    private Vector3 _cameraShakeAngleOffset = Vector3.zero;
+
+    [Header("총기 반동")]
+    public float RifleRecoilRate  = 10f;
+    public float CameraRecoilRate = 0.05f;
     #endregion
 
 
-    private Vector3 testPos;
-    private Vector3 testDir;
      
+
 
     #region MONOBEHAVIOUR
     private void Awake()
@@ -108,6 +118,8 @@ public class PlayerController : MonoBehaviour
         _currentSpeed = MoveSpeed;
 
         _shotPoint = transform.Find("root/add_weapon_r/Weapon_Rifle/ShotPoint").transform;
+
+        _aimDistance = (_aimLookTarget.position - _aimCameraPosition.position).magnitude;
     }
 
     private void Start()
@@ -284,12 +296,12 @@ public class PlayerController : MonoBehaviour
 
     private void AmingCameraMove()
     {
-        Vector3 offset = Quaternion.Euler(_amingPitch, _yaw, 0f) * new Vector3(0, 0, -(_aimLookTarget.position - _aimCameraPosition.position).magnitude);
+        Vector3 offset = Quaternion.Euler(_amingPitch, _yaw, 0f) * new Vector3(0, 0, -_aimDistance);
 
         _aimCameraPosition.position = _aimLookTarget.position + offset;
         _aimCameraPosition.transform.LookAt(_aimLookTarget.position);
 
-        PlayerCamera.transform.position = _aimCameraPosition.position;
+        PlayerCamera.transform.position = _aimCameraPosition.position + _cameraShakeOffset;
         PlayerCamera.transform.rotation = _aimCameraPosition.rotation;
     }
 
@@ -321,8 +333,11 @@ public class PlayerController : MonoBehaviour
         _pitch = Mathf.Clamp(_pitch, -_pitchClamp, _pitchClamp);
 
         // Aming Clamp
-        _amingPitch -= delta.y * MouseMoveSensitivity;
-        _amingPitch = Mathf.Clamp(_amingPitch, -_amingPitchClamp, _amingPitchClamp);
+        if(_isAiming == true)
+        {
+            _amingPitch -= delta.y * MouseMoveSensitivity;
+            _amingPitch = Mathf.Clamp(_amingPitch, -_amingPitchClamp, _amingPitchClamp);
+        }
     }
 
     private void OnZoom(float delta)
@@ -339,13 +354,13 @@ public class PlayerController : MonoBehaviour
         {
             _playerState = EPlayerState.Aiming;
 
-            JEventManager.SendEvent(new SwitchAimingModeEvent(true));
+            JEventManager.SendEvent(new SwitchAimingModeEvent(_isAiming));
         }
         else
         {
             _playerState = EPlayerState.Default;
 
-            JEventManager.SendEvent(new SwitchAimingModeEvent(false));
+            JEventManager.SendEvent(new SwitchAimingModeEvent(_isAiming));
 
             Vector3 cameraDir = PlayerCamera.transform.forward;
             cameraDir.y = 0f;
@@ -373,6 +388,7 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+
     private void OnShot()
     {
         if(_playerState == EPlayerState.Aiming)
@@ -380,7 +396,35 @@ public class PlayerController : MonoBehaviour
             _animator.Play("AimIdle_Shoot", 1, 0f);
 
             JEventManager.SendEvent(new ShotEvent(_shotPoint.position, _shotPoint.rotation));
+
+            StartCoroutine(CameraShake());
+
+            _amingPitch -= Time.deltaTime * RifleRecoilRate;
+            _amingPitch = Mathf.Clamp(_amingPitch, -_amingPitchClamp, _amingPitchClamp);
         }
+        else
+        {
+            _playerState = EPlayerState.Aiming;
+            JEventManager.SendEvent(new SwitchAimingModeEvent(_isAiming = true));
+        }
+    }
+
+    private IEnumerator CameraShake()
+    {
+        float elapsed = 0f;
+
+        while(elapsed < 0.1f)
+        {
+            elapsed += Time.deltaTime;
+
+            _cameraShakeOffset.x = Random.Range(-CameraRecoilRate, CameraRecoilRate);
+            _cameraShakeOffset.y = Random.Range(-CameraRecoilRate, CameraRecoilRate);
+
+            yield return null;
+        }
+
+        elapsed = 0;
+        _cameraShakeOffset = Vector3.zero;
     }
     #endregion
 }

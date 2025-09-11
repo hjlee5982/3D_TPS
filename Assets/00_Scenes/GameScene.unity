@@ -24864,6 +24864,10 @@ PrefabInstance:
       propertyPath: PlayerCamera
       value: 
       objectReference: {fileID: 7105365249744793047}
+    - target: {fileID: 340058011008398703, guid: 84bfe0b3bdbf61a4e9e822019719847b, type: 3}
+      propertyPath: RifleRecoilRate
+      value: 25
+      objectReference: {fileID: 0}
     - target: {fileID: 2380657114274441823, guid: 84bfe0b3bdbf61a4e9e822019719847b, type: 3}
       propertyPath: m_LocalPosition.x
       value: 96.85
