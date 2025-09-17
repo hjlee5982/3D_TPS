@@ -5919,11 +5919,14 @@ MonoBehaviour:
   WalkSpeed: 1
   DashSpeed: 5
   MouseMoveSensitivity: 0.12
+  _yaw: 0
+  _pitch: 0
+  _pitchClamp: 89
   MouseWheelSensitivity: 0.5
   ZoomLerpSpeed: 3
   MinDistance: 1
   MaxDistance: 4
-  RifleRecoilRate: 25
+  RifleRecoilRate: 50
   CameraRecoilRate: 0.05
 --- !u!143 &4323362595686696289
 CharacterController:

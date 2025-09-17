@@ -1,46 +1,32 @@
 using System.Collections;
-using System.Runtime.CompilerServices;
-using TreeEditor;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.InputSystem.XR;
-using VFavorites.Libs;
-using VInspector;
 
 public class PlayerController : MonoBehaviour
 {
-    #region ENUM
-    public enum EPlayerState
-    {
-        Default,
-        Aiming,
-        Jump
-    }
-    #endregion
-
-
-
-
-
     #region VARIABLES
-    [Header("애니메이터")]
-    private Animator     _animator    = null;                 // 애니메이터
-    private EPlayerState _playerState = EPlayerState.Default; // 상태 변수
+    [Header("상태 머신")]
+    public JStateMachine<PlayerController> StateMachine { get; private set; } = null;
+    public PlayerIdleState                 IdleState    { get; private set; } = null;
+    public PlayerAimingState               AimState     { get; private set; } = null;
 
+
+    [Header("애니메이터")]
+    public Animator Animator { get; private set; } = null;
+    
 
     [Header("카메라")]
-    public Camera     PlayerCamera;       // 플레이어를 비추는 카메라
-    private Transform _cameraLookTarget;  // 카메라가 바라볼 위치
-    private Transform _aimCameraPosition; // 조준 시 카메라가 이동 할 위치
-    private Transform _aimLookTarget;     // 조준 시 카메라가 바라 볼 위치
+    public Camera     PlayerCamera       = null;  // 플레이어를 비추는 카메라
+    private Transform _cameraLookTarget  = null;  // 카메라가 바라볼 위치
+    private Transform _aimCameraPosition = null;  // 조준 시 카메라가 이동 할 위치
+    private Transform _aimLookTarget     = null;  // 조준 시 카메라가 바라 볼 위치
 
 
     [Header("이동 변수")]
-    public float       MoveSpeed       = 3f;                   // 캐릭터의 이동 속도
-    private float      _currentSpeed   = 0f;                   // 현재 이동 속도
-    private int        _isRun          = 0;
-    private Vector3    _moveDir        = Vector3.zero;         // 캐릭터가 이동하는 방향
-    private Quaternion _targetRotation = Quaternion.identity;  // 캐릭터가 이동하는 방향으로의 쿼터니온
+    public  float      MoveSpeed       = 3f;                  // 캐릭터의 기준 속도
+    private int        _isMoving       = 0;                   // 현재 이동하고 있는지 체크
+    private float      _currentSpeed   = 0f;                  // 현재 이동 속도(내부 계산용)
+    private Vector3    _moveDir        = Vector3.zero;        // 캐릭터가 이동하는 방향
+    private Quaternion _targetRotation = Quaternion.identity; // 캐릭터가 이동하는 방향으로의 쿼터니온
 
 
     [Header("걷기 변수")]
@@ -52,10 +38,10 @@ public class PlayerController : MonoBehaviour
 
 
     [Header("마우스 이동 변수")]
-    public  float MouseMoveSensitivity  = 0.12f; // 마우스 이동 감도
-    private float _yaw              = 0f;  // Z축 회전
-    private float _pitch            = 0f;  // X축 회전
-    private float _pitchClamp       = 89f; // 
+    public float MouseMoveSensitivity = 0.12f; // 마우스 이동 감도
+    public float _yaw                 = 0f;    // Z축 회전
+    public float _pitch               = 0f;    // X축 회전
+    public float _pitchClamp          = 89f;   // X축 회전 제한 각도
 
     
     [Header("마우스 휠 변수")]
@@ -68,26 +54,29 @@ public class PlayerController : MonoBehaviour
 
 
     [Header("조준 변수")]
-    private Transform _spine; // 위, 아래 조준 애니메이션이 없어서 허리를 x축으로 회전시킴
-    private Transform _rifle; // 위처럼 회전하면 총은 그대로여서 같이 회전시켜주려고 추가함
-    private bool _isAiming = false;
-    private float _amingPitch      = 0;
-    private float _amingPitchClamp = 45f;
-    private float _aimDistance = 0f;
+    private Transform _spine           = null;  // 위, 아래 조준 애니메이션이 없어서 허리를 x축으로 회전시킴
+    private Transform _rifle           = null;  // 위처럼 회전하면 총은 그대로여서 같이 회전시켜주려고 추가함
+    private bool      _isAiming        = false; // 조준상태인지 체크
+    private float     _amingPitch      = 0;     // 조준상태에서 마우스 X축 회전
+    private float     _amingPitchClamp = 45f;   // 조준상태에서 마우스 X축 회전 제한
+    private float     _aimDistance     = 0f;    // 조준상태에서 카메라 위치와 카메라가 바라보는 위치 사이의 거리
 
 
     [Header("캐릭터 컨트롤러")]
     private CharacterController _controller = null;
-    private Vector3 _velocity               = Vector3.zero;
-    private float   _gravity                = -20f;
-    private float   _jumpHeight             = 1.1f;
+    private Vector3             _velocity   = Vector3.zero;
+    private float               _gravity    = -20f;
+    private float               _jumpHeight = 1.1f;
+
 
     [Header("총알 생성 위치")]
     private Transform _shotPoint;
 
+
     [Header("카메라 흔들림 오프셋")]
     private Vector3 _cameraShakeOffset      = Vector3.zero;
     private Vector3 _cameraShakeAngleOffset = Vector3.zero;
+
 
     [Header("총기 반동")]
     public float RifleRecoilRate  = 10f;
@@ -101,47 +90,22 @@ public class PlayerController : MonoBehaviour
     #region MONOBEHAVIOUR
     private void Awake()
     {
-        _animator = transform.GetComponent<Animator>();
-
-        _cameraLookTarget  = transform.Find("CameraLookTarget");
-        _aimCameraPosition = transform.Find("AimCameraPosition");
-        _aimLookTarget     = transform.Find("AimLookTarget");
-
-        _currentDistance  = _targetDistance = Mathf.Abs(PlayerCamera.transform.position.z - _cameraLookTarget.position.z);
-        _targetRotation   = Quaternion.identity;
-
-        _spine = transform.Find("root/pelvis/spine_01");
-        _rifle = transform.Find("root/add_weapon_r");
-
-        _controller = transform.GetComponent<CharacterController>();
-
-        _currentSpeed = MoveSpeed;
-
-        _shotPoint = transform.Find("root/add_weapon_r/Weapon_Rifle/ShotPoint").transform;
-
-        _aimDistance = (_aimLookTarget.position - _aimCameraPosition.position).magnitude;
+        InitializeComponents();
+        InitializeTransforms();
+        InitializeValues();
+        InitializeStateMachine();
     }
-
+    
     private void Start()
     {
-        // 인풋 바인딩
-        {
-            JInputManager.Instance.BindBasicPlayerMovement(OnMove, OnDash, OnWalk, OnJump, OnAiming);
-            JInputManager.Instance.BindHoldingAction(OnShot, 0.1f);
-            JInputManager.Instance.BindBasicCameraMovement(OnLook, OnZoom);
-        }
-    }
-
-    private void Update()
-    {
+        InitializeInputActions();
     }
 
     private void LateUpdate()
     {
-        UpdateTransform();
-
+        UpdateStateMachine();
+        ApplyGravity();
         UpdateCameraRaycasting();
-
         UpdatePlayerAnimation();
     }
     #endregion
@@ -151,90 +115,60 @@ public class PlayerController : MonoBehaviour
 
 
     #region FUNCTIONS
-    private void UpdateTransform()
+    private void InitializeComponents()
     {
-        switch (_playerState)
+        Animator    = transform.GetComponent<Animator>();
+        _controller = transform.GetComponent<CharacterController>();
+    }
+
+    private void InitializeTransforms()
+    {
+        _cameraLookTarget  = transform.Find("CameraLookTarget");
+        _aimCameraPosition = transform.Find("AimCameraPosition");
+        _aimLookTarget     = transform.Find("AimLookTarget");
+        _spine             = transform.Find("root/pelvis/spine_01");
+        _rifle             = transform.Find("root/add_weapon_r");
+        _shotPoint         = transform.Find("root/add_weapon_r/Weapon_Rifle/ShotPoint");
+    }
+
+    private void InitializeValues()
+    {
+        _currentSpeed    = MoveSpeed;
+        _aimDistance     = (_aimLookTarget.position - _aimCameraPosition.position).magnitude;
+        _currentDistance = _targetDistance = Mathf.Abs(PlayerCamera.transform.position.z - _cameraLookTarget.position.z);
+    }
+
+    private void InitializeStateMachine()
+    {
+        StateMachine = new JStateMachine<PlayerController>(this);
         {
-            case EPlayerState.Default:
-
-                BasicCharacterMove();
-                BasicCameraMove();
-                break;
-
-            case EPlayerState.Aiming:
-
-                AmingCharacterMove();
-                AmingCameraMove();
-
-                // 조준 중 위, 아래를 바라보는 애니메이션이 없어서
-                // 정면을 조준하는 애니메이션에서 Spine과 Rifle을 회전시키기로 함
-                {
-                    // X축 회전 쿼터니온
-                    Quaternion pitchRotation = Quaternion.AngleAxis(_amingPitch, transform.right);
-
-                    // Spine 회전
-                    _spine.rotation = pitchRotation * _spine.rotation;
-
-                    // Rifle 회전
-                    _rifle.rotation = pitchRotation * _rifle.rotation;
-
-                    // Rifle 위치 보정
-                    Vector3 localOffset = _rifle.position - _spine.position;
-                    Vector3 rotateOffset = pitchRotation * localOffset;
-                    _rifle.position = _spine.position + rotateOffset;
-                }
-                // 총구 정렬
-                {
-                    Ray ray = PlayerCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0f));
-                    
-                    if(Physics.Raycast(ray, out RaycastHit hit, 1000f))
-                    {
-                        _shotPoint.LookAt(hit.point);
-                    }
-                    else
-                    {
-                        _shotPoint.LookAt(ray.GetPoint(1000f));
-                    }
-                }
-               
-                break;
-
-            case EPlayerState.Jump:
-
-                BasicCharacterMove();
-                BasicCameraMove();
-
-                if (_velocity.y <= 1f)
-                {
-                    _playerState = EPlayerState.Default;
-                }
-
-                break;
+            IdleState = new PlayerIdleState();
+            AimState  = new PlayerAimingState();
         }
+        StateMachine.ChangeState(IdleState);
+    }
 
+    private void InitializeInputActions()
+    {
+        JInputManager.Instance.BindBasicPlayerMovement(OnMove, OnDash, OnWalk, OnJump, OnAiming);
+        JInputManager.Instance.BindHoldingAction(OnShot, 0.1f);
+        JInputManager.Instance.BindBasicCameraMovement(OnLook, OnZoom);
+    }
 
-        // 바닥 체크 (isGrounded는 CC가 제공하는 속성)
-        if (_controller.isGrounded && _velocity.y < 0)
-        {
-            _velocity.y = -2f; // 바닥에 붙어 있게 약간 음수 유지
-        }
-
-        // 중력 적용
-        _velocity.y += _gravity * Time.deltaTime;
-        _controller.Move(_velocity * Time.deltaTime);
+    private void UpdateStateMachine()
+    {
+        StateMachine.Update();
     }
 
     private void UpdateCameraRaycasting()
     {
         // 캐릭터에서 카메라로 Ray를 쏴야 오브젝트 두께를 고려 할 필요가 없음
         Vector3 dir = PlayerCamera.transform.position - _cameraLookTarget.position;
-        Ray ray = new Ray(_cameraLookTarget.position, dir);
+        Ray     ray = new Ray(_cameraLookTarget.position, dir);
 
         float dist = dir.magnitude;
 
-        int layerMask = LayerMask.GetMask("Obstacle");
-
-        if (Physics.Raycast(ray, out RaycastHit hit, dist, layerMask) == true)
+        if (Physics.Raycast(ray, out RaycastHit hit, dist, LayerMask.GetMask("Obstacle")) == true)
         {
             // 캐릭터와 카메라 사이에 무언가 있을 경우
             PlayerCamera.transform.position = _cameraLookTarget.position + dir.normalized * (hit.distance - 0.4f);
@@ -242,6 +176,7 @@ public class PlayerController : MonoBehaviour
 
         // 카메라 근접 투명처리
         float adjustedDist = (_cameraLookTarget.position - PlayerCamera.transform.position).magnitude;
+
         if (adjustedDist <= 0.7f)
         {
             PlayerCamera.cullingMask &= ~(1 << LayerMask.NameToLayer("Player"));
@@ -254,17 +189,12 @@ public class PlayerController : MonoBehaviour
 
     private void UpdatePlayerAnimation()
     {
-        _animator.SetFloat("Speed", _currentSpeed * _isRun, 0.1f, Time.deltaTime);
+        Animator.SetFloat("Speed", _currentSpeed * _isMoving, 0.1f, Time.deltaTime);
 
-        // _animator.SetFloat("AimingMoveX", _moveDir.x, 0.1f, Time.deltaTime);
-        // _animator.SetFloat("AimingMoveZ", _moveDir.z, 0.1f, Time.deltaTime);
-
-        _animator.SetBool("IsAiming", _playerState == EPlayerState.Aiming);
-
-        _animator.speed = _currentSpeed == DashSpeed ? 1.5f : 1f;
+        Animator.speed = _currentSpeed == DashSpeed ? 1.5f : 1f;
     }
 
-    private void BasicCharacterMove()
+    public void BasicCharacterMove()
     {
         // 캐릭터 기본 이동
         _controller.Move(_moveDir * Time.deltaTime * _currentSpeed);
@@ -273,7 +203,7 @@ public class PlayerController : MonoBehaviour
         transform.rotation = Quaternion.Slerp(transform.rotation, _targetRotation, Time.deltaTime * 20f);
     }
 
-    private void BasicCameraMove()
+    public void BasicCameraMove()
     {
         // 줌인, 줌아웃
         _currentDistance = Mathf.Lerp(_currentDistance, _targetDistance, Time.deltaTime * ZoomLerpSpeed);
@@ -285,7 +215,7 @@ public class PlayerController : MonoBehaviour
         PlayerCamera.transform.LookAt(_cameraLookTarget);
     }
 
-    private void AmingCharacterMove()
+    public void AmingCharacterMove()
     {
         // 캐릭터 기본 이동
         _controller.Move(_moveDir * Time.deltaTime * _currentSpeed);
@@ -294,7 +224,7 @@ public class PlayerController : MonoBehaviour
         transform.rotation = Quaternion.Euler(0f, _yaw, 0f);
     }
 
-    private void AmingCameraMove()
+    public void AmingCameraMove()
     {
         Vector3 offset = Quaternion.Euler(_amingPitch, _yaw, 0f) * new Vector3(0, 0, -_aimDistance);
 
@@ -303,6 +233,53 @@ public class PlayerController : MonoBehaviour
 
         PlayerCamera.transform.position = _aimCameraPosition.position + _cameraShakeOffset;
         PlayerCamera.transform.rotation = _aimCameraPosition.rotation;
+    }
+
+    public void AmingTransformAdjust()
+    {
+        // 조준 중 위, 아래를 바라보는 애니메이션이 없어서
+        // 정면을 조준하는 애니메이션에서 Spine과 Rifle을 회전시키기로 함
+        {
+            // X축 회전 쿼터니온
+            Quaternion pitchRotation = Quaternion.AngleAxis(_amingPitch, transform.right);
+
+            // Spine 회전
+            _spine.rotation = pitchRotation * _spine.rotation;
+
+            // Rifle 회전
+            _rifle.rotation = pitchRotation * _rifle.rotation;
+
+            // Rifle 위치 보정
+            Vector3 localOffset  = _rifle.position - _spine.position;
+            Vector3 rotateOffset = pitchRotation * localOffset;
+            _rifle.position = _spine.position + rotateOffset;
+        }
+        // 총구 정렬
+        {
+            Ray ray = PlayerCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0f));
+
+            if (Physics.Raycast(ray, out RaycastHit hit, 1000f))
+            {
+                _shotPoint.LookAt(hit.point);
+            }
+            else
+            {
+                _shotPoint.LookAt(ray.GetPoint(50f));
+            }
+        }
+    }
+
+    private void ApplyGravity()
+    {
+        // 바닥 체크 (isGrounded는 CC가 제공하는 속성)
+        if (_controller.isGrounded && _velocity.y < 0)
+        {
+            _velocity.y = -2f; // 바닥에 붙어 있게 약간 음수 유지
+        }
+
+        // 중력 적용
+        _velocity.y += _gravity * Time.deltaTime;
+        _controller.Move(_velocity * Time.deltaTime);
     }
 
     private void OnMove(Vector3 dir)
@@ -318,55 +295,14 @@ public class PlayerController : MonoBehaviour
 
         _moveDir = cameraLook * dir.z + cameraRight * dir.x;
 
-        _isRun = dir.magnitude == 1f ? 1 : 0;
-
         if(dir.magnitude != 0f)
         {
             _targetRotation  = Quaternion.LookRotation(_moveDir);
-        }
-    }
-
-    private void OnLook(Vector2 delta)
-    {
-        _yaw   += delta.x * MouseMoveSensitivity;
-        _pitch -= delta.y * MouseMoveSensitivity;
-        _pitch = Mathf.Clamp(_pitch, -_pitchClamp, _pitchClamp);
-
-        // Aming Clamp
-        if(_isAiming == true)
-        {
-            _amingPitch -= delta.y * MouseMoveSensitivity;
-            _amingPitch = Mathf.Clamp(_amingPitch, -_amingPitchClamp, _amingPitchClamp);
-        }
-    }
-
-    private void OnZoom(float delta)
-    {
-        _targetDistance -= delta * MouseWheelSensitivity;
-        _targetDistance = Mathf.Clamp(_targetDistance, MinDistance, MaxDistance);
-    }
-
-    private void OnAiming()
-    {
-        _isAiming = !_isAiming;
-
-        if (_isAiming == true)
-        {
-            _playerState = EPlayerState.Aiming;
-
-            JEventManager.SendEvent(new SwitchAimingModeEvent(_isAiming));
+            _isMoving = 1;
         }
         else
         {
-            _playerState = EPlayerState.Default;
-
-            JEventManager.SendEvent(new SwitchAimingModeEvent(_isAiming));
-
-            Vector3 cameraDir = PlayerCamera.transform.forward;
-            cameraDir.y = 0f;
-            cameraDir.Normalize();
-
-            _targetRotation = Quaternion.LookRotation(cameraDir);
+            _isMoving = 0;
         }
     }
 
@@ -388,12 +324,52 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    private void OnLook(Vector2 delta)
+    {
+        _yaw   += delta.x * MouseMoveSensitivity;
+        _pitch -= delta.y * MouseMoveSensitivity;
+        _pitch = Mathf.Clamp(_pitch, -_pitchClamp, _pitchClamp);
+
+        // Aming Clamp
+        if(_isAiming == true)
+        {
+            _amingPitch -= delta.y * MouseMoveSensitivity;
+            _amingPitch = Mathf.Clamp(_amingPitch, -_amingPitchClamp, _amingPitchClamp);
+        }
+    }
+
+    private void OnZoom(float delta)
+    {
+        _targetDistance -= delta * MouseWheelSensitivity;
+        _targetDistance  = Mathf.Clamp(_targetDistance, MinDistance, MaxDistance);
+    }
+
+    private void OnAiming()
+    {
+        _isAiming = !_isAiming;
+
+        if (_isAiming == true)
+        {
+            _amingPitch = Mathf.Clamp(_pitch, -_amingPitchClamp, +_amingPitchClamp);
+            StateMachine.ChangeState(AimState);
+        }
+        else
+        {
+            StateMachine.ChangeState(IdleState);
+
+            Vector3 cameraDir = PlayerCamera.transform.forward;
+            cameraDir.y = 0f;
+            cameraDir.Normalize();
+
+            _targetRotation = Quaternion.LookRotation(cameraDir);
+        }
+    }
 
     private void OnShot()
     {
-        if(_playerState == EPlayerState.Aiming)
+        if(_isAiming == true)
         {
-            _animator.Play("AimIdle_Shoot", 1, 0f);
+            Animator.Play("AimIdle_Shoot", 1, 0f);
 
             JEventManager.SendEvent(new ShotEvent(_shotPoint.position, _shotPoint.rotation));
 
@@ -404,8 +380,9 @@ public class PlayerController : MonoBehaviour
         }
         else
         {
-            _playerState = EPlayerState.Aiming;
-            JEventManager.SendEvent(new SwitchAimingModeEvent(_isAiming = true));
+            StateMachine.ChangeState(AimState);
+            _amingPitch = Mathf.Clamp(_pitch, -_amingPitchClamp, +_amingPitchClamp);
+            _isAiming = true;
         }
     }
 
