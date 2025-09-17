@@ -367,23 +367,22 @@ public class PlayerController : MonoBehaviour
 
     private void OnShot()
     {
-        if(_isAiming == true)
-        {
-            Animator.Play("AimIdle_Shoot", 1, 0f);
-
-            JEventManager.SendEvent(new ShotEvent(_shotPoint.position, _shotPoint.rotation));
-
-            StartCoroutine(CameraShake());
-
-            _amingPitch -= Time.deltaTime * RifleRecoilRate;
-            _amingPitch = Mathf.Clamp(_amingPitch, -_amingPitchClamp, _amingPitchClamp);
-        }
-        else
+        if(_isAiming == false)
         {
             StateMachine.ChangeState(AimState);
-            _amingPitch = Mathf.Clamp(_pitch, -_amingPitchClamp, +_amingPitchClamp);
             _isAiming = true;
         }
+
+        JEventManager.SendEvent(new ShotEvent(_shotPoint.position, _shotPoint.rotation));
+
+        JAudioManager.Instance.PlaySFX("Rifle_Shot");
+
+        Animator.Play("AimIdle_Shoot", 1, 0f);
+
+        StartCoroutine(CameraShake());
+
+        _amingPitch -= Time.deltaTime * RifleRecoilRate;
+        _amingPitch = Mathf.Clamp(_amingPitch, -_amingPitchClamp, _amingPitchClamp);
     }
 
     private IEnumerator CameraShake()
