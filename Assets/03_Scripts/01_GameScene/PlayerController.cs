@@ -81,10 +81,21 @@ public class PlayerController : MonoBehaviour
     [Header("ÃÑ±â ¹Ýµ¿")]
     public float RifleRecoilRate  = 10f;
     public float CameraRecoilRate = 0.05f;
+
+
+    [Header("°È´Â ¼Ò¸®")]
+    private bool  _footStepSwitch  = false;
+    private float _stepTimer       = 0f;
+    private float _walkInterval    = 0.55f;
+    private float _runInterval     = 0.33f;
+    private float _dashInterval    = 0.2f;
+    private float _aimWalkInterval = 0.6f;
+    private float _aimRunInterval  = 0.4f;
+    private float _aimDashInterval = 0.27f;
     #endregion
 
 
-     
+
 
 
     #region MONOBEHAVIOUR
@@ -107,6 +118,7 @@ public class PlayerController : MonoBehaviour
         ApplyGravity();
         UpdateCameraRaycasting();
         UpdatePlayerAnimation();
+        PlayerFootStepSound();
     }
     #endregion
 
@@ -401,6 +413,49 @@ public class PlayerController : MonoBehaviour
 
         elapsed = 0;
         _cameraShakeOffset = Vector3.zero;
+    }
+
+    private void PlayerFootStepSound()
+    {
+        float speed = _currentSpeed * _isMoving;
+
+        if (speed > 0.1f)
+        {
+            Debug.Log(speed);
+
+            _stepTimer -= Time.deltaTime;
+
+            float interval = 0f;
+
+            if(speed < 1.1f)
+            {
+                interval = _isAiming == true ? _aimWalkInterval : _walkInterval;
+            }
+            else if(speed < 3.1f)
+            {
+                interval = _isAiming == true ? _aimRunInterval : _runInterval;
+            }
+            else
+            {
+                interval = _isAiming == true ? _aimDashInterval : _dashInterval;
+            }
+
+            if(_stepTimer <= 0f && _controller.isGrounded == true)
+            {
+                if(_footStepSwitch == true)
+                {
+                    JAudioManager.Instance.PlaySFX("FootStep_Concrete_1");
+                    _footStepSwitch = false;
+                }
+                else
+                {
+                    JAudioManager.Instance.PlaySFX("FootStep_Concrete_2");
+                    _footStepSwitch = true;
+                }
+
+                _stepTimer = interval;
+            }
+        }
     }
     #endregion
 }
