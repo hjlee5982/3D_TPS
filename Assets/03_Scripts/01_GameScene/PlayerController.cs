@@ -92,12 +92,12 @@ public class PlayerController : MonoBehaviour
     {
         InitializeComponents();
         InitializeTransforms();
-        InitializeValues();
         InitializeStateMachine();
     }
     
     private void Start()
     {
+        InitializeValues();
         InitializeInputActions();
     }
 
@@ -189,7 +189,7 @@ public class PlayerController : MonoBehaviour
 
     private void UpdatePlayerAnimation()
     {
-        Animator.SetFloat("Speed", _currentSpeed * _isMoving, 0.1f, Time.deltaTime);
+        Animator.SetFloat("Speed", _currentSpeed * _isMoving, 0.05f, Time.deltaTime);
 
         Animator.speed = _currentSpeed == DashSpeed ? 1.5f : 1f;
     }

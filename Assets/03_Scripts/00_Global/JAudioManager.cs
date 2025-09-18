@@ -65,7 +65,7 @@ public class JAudioManager : MonoBehaviour
     public  List<AudioClip>               SFX_ClipList       = new List<AudioClip>();
     private Dictionary<string, AudioClip> SFX_Clips          = new Dictionary<string, AudioClip>();
     private List<AudioSource>             SFX_Sources        = new List<AudioSource>();
-    private int                           _sfxSourcePoolSize = 10;
+    private int                           _sfxSourcePoolSize = 30;
 
     //[Space(10)]
     //[Header("VOICE")]

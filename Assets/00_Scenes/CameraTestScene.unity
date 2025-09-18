@@ -1078,6 +1078,38 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1388110220725377835, guid: adfa49774fa811a4b8ca107b2d347b8f, type: 3}
+      propertyPath: BGM_ClipList.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1388110220725377835, guid: adfa49774fa811a4b8ca107b2d347b8f, type: 3}
+      propertyPath: SFX_ClipList.Array.size
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 1388110220725377835, guid: adfa49774fa811a4b8ca107b2d347b8f, type: 3}
+      propertyPath: 'BGM_ClipList.Array.data[0]'
+      value: 
+      objectReference: {fileID: 8300000, guid: 94b270d7082728e49910c3030df56382, type: 3}
+    - target: {fileID: 1388110220725377835, guid: adfa49774fa811a4b8ca107b2d347b8f, type: 3}
+      propertyPath: 'SFX_ClipList.Array.data[0]'
+      value: 
+      objectReference: {fileID: 8300000, guid: f5b8a6095559a5c4aacad23ad55e3302, type: 3}
+    - target: {fileID: 1388110220725377835, guid: adfa49774fa811a4b8ca107b2d347b8f, type: 3}
+      propertyPath: 'SFX_ClipList.Array.data[1]'
+      value: 
+      objectReference: {fileID: 8300000, guid: a23d61de6faea0543a9781022771b0e7, type: 3}
+    - target: {fileID: 1388110220725377835, guid: adfa49774fa811a4b8ca107b2d347b8f, type: 3}
+      propertyPath: 'SFX_ClipList.Array.data[2]'
+      value: 
+      objectReference: {fileID: 8300000, guid: ec93b3ab1e3185344870964b0ba5ac51, type: 3}
+    - target: {fileID: 1388110220725377835, guid: adfa49774fa811a4b8ca107b2d347b8f, type: 3}
+      propertyPath: 'SFX_ClipList.Array.data[3]'
+      value: 
+      objectReference: {fileID: 8300000, guid: 9b722581f17e39c42908c37856f0623c, type: 3}
+    - target: {fileID: 1388110220725377835, guid: adfa49774fa811a4b8ca107b2d347b8f, type: 3}
+      propertyPath: 'SFX_ClipList.Array.data[4]'
+      value: 
+      objectReference: {fileID: 8300000, guid: a27a3660913844a40b77e13fa265b286, type: 3}
     - target: {fileID: 1686376047654066878, guid: adfa49774fa811a4b8ca107b2d347b8f, type: 3}
       propertyPath: m_Name
       value: JAudioManager
@@ -1125,31 +1157,8 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 1686376047654066878, guid: adfa49774fa811a4b8ca107b2d347b8f, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 4480940132810942004}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: adfa49774fa811a4b8ca107b2d347b8f, type: 3}
---- !u!1 &4480940132810942003 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 1686376047654066878, guid: adfa49774fa811a4b8ca107b2d347b8f, type: 3}
-  m_PrefabInstance: {fileID: 4480940132810942002}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &4480940132810942004
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4480940132810942003}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 25f9cbeea0cf20542922a1b014a6e43e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  AudioMixer: {fileID: 24100000, guid: e616777ad3cd3884290039434ece0750, type: 2}
-  BGM_ClipList: []
-  SFX_ClipList: []
 --- !u!1001 &6766837963045788564
 PrefabInstance:
   m_ObjectHideFlags: 0
