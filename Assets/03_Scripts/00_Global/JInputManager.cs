@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -60,6 +61,7 @@ public class JInputManager : MonoBehaviour
     private InputAction Jump;
     private InputAction Aimm;
     private InputAction Shot;
+    private InputAction Reload;
     public  Action<Vector3> OnMove;
     public  Action<Vector2> OnLook;
     public  Action<float>   OnZoom;
@@ -68,6 +70,7 @@ public class JInputManager : MonoBehaviour
     public  Action          OnJump;
     public  Action          OnAimm;
     public  Action          OnShot;
+    public  Action          OnReload;
 
     [Header("È¦µù ÀÎÇ² ÇÃ·¡±×")]
     private bool  _isHolding     = false;
@@ -136,6 +139,7 @@ public class JInputManager : MonoBehaviour
         Walk.Enable();
         Jump.Enable();
         Shot.Enable();
+        Reload.Enable();
 
         foreach(RebindableInputAction action in _inputActionDict.Values)
         {
@@ -154,6 +158,7 @@ public class JInputManager : MonoBehaviour
         Walk.Disable();
         Jump.Disable();
         Shot.Disable();
+        Reload.Disable();
 
         foreach (RebindableInputAction action in _inputActionDict.Values)
         {
@@ -194,10 +199,11 @@ public class JInputManager : MonoBehaviour
 
             Aimm = InputActions.FindAction("Aiming");
             Aimm.performed += ctx => OnAimm?.Invoke();
+            
+            Reload = InputActions.FindAction("Reload");
+            Reload.performed += ctx => OnReload?.Invoke();
 
             Shot = InputActions.FindAction("Shot");
-            // Shot.performed += ctx => OnShot?.Invoke();
-
             Shot.started  += ctx => _isHolding = true;
             Shot.canceled += ctx => _isHolding = false;
         }
@@ -225,14 +231,15 @@ public class JInputManager : MonoBehaviour
             }
         }
     }
-
-    public void BindBasicPlayerMovement(Action<Vector3> move, Action<bool> dash, Action<bool> walk, Action jump, Action aimm)
+    
+    public void BindButtonAction(Action<Vector3> move, Action<bool> dash, Action<bool> walk, Action jump, Action aimm, Action Reload)
     {
-        OnMove += move;
-        OnDash += dash;
-        OnWalk += walk;
-        OnJump += jump;
-        OnAimm += aimm;
+        OnMove   += move;
+        OnDash   += dash;
+        OnWalk   += walk;
+        OnJump   += jump;
+        OnAimm   += aimm;
+        OnReload += Reload;
     }
 
     public void BindHoldingAction(Action hold, float interval)
@@ -240,8 +247,8 @@ public class JInputManager : MonoBehaviour
         OnShot += hold;
         _interval = interval;
     }
-
-    public void BindBasicCameraMovement(Action<Vector2> look, Action<float> zoom)
+    
+    public void BindCameraAction(Action<Vector2> look, Action<float> zoom)
     {
         OnLook += look;
         OnZoom += zoom;

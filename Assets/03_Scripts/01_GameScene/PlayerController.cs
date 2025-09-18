@@ -162,9 +162,9 @@ public class PlayerController : MonoBehaviour
 
     private void InitializeInputActions()
     {
-        JInputManager.Instance.BindBasicPlayerMovement(OnMove, OnDash, OnWalk, OnJump, OnAiming);
+        JInputManager.Instance.BindButtonAction(OnMove, OnDash, OnWalk, OnJump, OnAiming, OnReload);
         JInputManager.Instance.BindHoldingAction(OnShot, 0.1f);
-        JInputManager.Instance.BindBasicCameraMovement(OnLook, OnZoom);
+        JInputManager.Instance.BindCameraAction(OnLook, OnZoom);
     }
 
     private void UpdateStateMachine()
@@ -294,9 +294,12 @@ public class PlayerController : MonoBehaviour
         _controller.Move(_velocity * Time.deltaTime);
     }
 
+
+
+    #region INPUT
     private void OnMove(Vector3 dir)
     {
-        Vector3 cameraLook  = PlayerCamera.transform.forward;
+        Vector3 cameraLook = PlayerCamera.transform.forward;
         Vector3 cameraRight = PlayerCamera.transform.right;
 
         cameraLook.y = 0f;
@@ -307,9 +310,9 @@ public class PlayerController : MonoBehaviour
 
         _moveDir = cameraLook * dir.z + cameraRight * dir.x;
 
-        if(dir.magnitude != 0f)
+        if (dir.magnitude != 0f)
         {
-            _targetRotation  = Quaternion.LookRotation(_moveDir);
+            _targetRotation = Quaternion.LookRotation(_moveDir);
             _isMoving = 1;
         }
         else
@@ -338,12 +341,12 @@ public class PlayerController : MonoBehaviour
 
     private void OnLook(Vector2 delta)
     {
-        _yaw   += delta.x * MouseMoveSensitivity;
+        _yaw += delta.x * MouseMoveSensitivity;
         _pitch -= delta.y * MouseMoveSensitivity;
         _pitch = Mathf.Clamp(_pitch, -_pitchClamp, _pitchClamp);
 
         // Aming Clamp
-        if(_isAiming == true)
+        if (_isAiming == true)
         {
             _amingPitch -= delta.y * MouseMoveSensitivity;
             _amingPitch = Mathf.Clamp(_amingPitch, -_amingPitchClamp, _amingPitchClamp);
@@ -353,7 +356,7 @@ public class PlayerController : MonoBehaviour
     private void OnZoom(float delta)
     {
         _targetDistance -= delta * MouseWheelSensitivity;
-        _targetDistance  = Mathf.Clamp(_targetDistance, MinDistance, MaxDistance);
+        _targetDistance = Mathf.Clamp(_targetDistance, MinDistance, MaxDistance);
     }
 
     private void OnAiming()
@@ -379,7 +382,7 @@ public class PlayerController : MonoBehaviour
 
     private void OnShot()
     {
-        if(_isAiming == false)
+        if (_isAiming == false)
         {
             StateMachine.ChangeState(AimState);
             _isAiming = true;
@@ -397,11 +400,20 @@ public class PlayerController : MonoBehaviour
         _amingPitch = Mathf.Clamp(_amingPitch, -_amingPitchClamp, _amingPitchClamp);
     }
 
+    private void OnReload()
+    {
+        Animator.Play("Reload", 1, 0f);
+    }
+    #endregion
+
+
+
+    #region EFFECT
     private IEnumerator CameraShake()
     {
         float elapsed = 0f;
 
-        while(elapsed < 0.1f)
+        while (elapsed < 0.1f)
         {
             elapsed += Time.deltaTime;
 
@@ -427,11 +439,11 @@ public class PlayerController : MonoBehaviour
 
             float interval = 0f;
 
-            if(speed < 1.1f)
+            if (speed < 1.1f)
             {
                 interval = _isAiming == true ? _aimWalkInterval : _walkInterval;
             }
-            else if(speed < 3.1f)
+            else if (speed < 3.1f)
             {
                 interval = _isAiming == true ? _aimRunInterval : _runInterval;
             }
@@ -440,9 +452,9 @@ public class PlayerController : MonoBehaviour
                 interval = _isAiming == true ? _aimDashInterval : _dashInterval;
             }
 
-            if(_stepTimer <= 0f && _controller.isGrounded == true)
+            if (_stepTimer <= 0f && _controller.isGrounded == true)
             {
-                if(_footStepSwitch == true)
+                if (_footStepSwitch == true)
                 {
                     JAudioManager.Instance.PlaySFX("FootStep_Concrete_1");
                     _footStepSwitch = false;
@@ -457,5 +469,6 @@ public class PlayerController : MonoBehaviour
             }
         }
     }
+    #endregion
     #endregion
 }
