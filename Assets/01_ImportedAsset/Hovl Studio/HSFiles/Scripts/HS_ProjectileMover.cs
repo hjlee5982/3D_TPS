@@ -119,7 +119,9 @@ public class HS_ProjectileMover : MonoBehaviour
                 Destroy(gameObject, hitPS.main.duration);
             }
             else
+            {
                 Destroy(gameObject, 1);
+            }
         }
     }
 }

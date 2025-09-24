@@ -1,10 +1,28 @@
 using UnityEngine;
 
-public class JUIManager : MonoBehaviour
+public class JUIManager : JBaseClass
 {
     #region VARIABLES
     [Header("UI ¿ä¼Ò")]
     private GameObject _crossHair;
+    #endregion
+
+
+
+
+
+    #region OVERRIDE
+    protected override void InitializeComponents()
+    {
+    }
+
+    protected override void InitializeTransforms()
+    {
+    }
+
+    protected override void InitializeValues()
+    {
+    }
     #endregion
 
 

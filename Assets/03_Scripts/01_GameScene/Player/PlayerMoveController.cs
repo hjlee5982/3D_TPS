@@ -1,7 +1,7 @@
 using System.Collections;
 using UnityEngine;
 
-public class PlayerController : MonoBehaviour
+public class PlayerController : JBaseClass
 {
     #region VARIABLES
     [Header("상태 머신")]
@@ -92,6 +92,9 @@ public class PlayerController : MonoBehaviour
     private float _aimWalkInterval = 0.6f;
     private float _aimRunInterval  = 0.4f;
     private float _aimDashInterval = 0.27f;
+
+    [Header("총알 확인 변수")]
+    private bool _hasBullet = true;
     #endregion
 
 
@@ -120,20 +123,30 @@ public class PlayerController : MonoBehaviour
         UpdatePlayerAnimation();
         PlayerFootStepSound();
     }
+
+    private void OnEnable()
+    {
+        JEventManager.Subscribe<BulletCountCheckEvent>(BulletCountCheck);
+    }
+
+    private void OnDisable()
+    {
+        JEventManager.Unsubscribe<BulletCountCheckEvent>(BulletCountCheck);
+    }
     #endregion
 
 
 
 
 
-    #region FUNCTIONS
-    private void InitializeComponents()
+    #region OVERRIDE
+    protected override void InitializeComponents()
     {
         Animator    = transform.GetComponent<Animator>();
         _controller = transform.GetComponent<CharacterController>();
     }
 
-    private void InitializeTransforms()
+    protected override void InitializeTransforms()
     {
         _cameraLookTarget  = transform.Find("CameraLookTarget");
         _aimCameraPosition = transform.Find("AimCameraPosition");
@@ -143,13 +156,19 @@ public class PlayerController : MonoBehaviour
         _shotPoint         = transform.Find("root/add_weapon_r/Weapon_Rifle/ShotPoint");
     }
 
-    private void InitializeValues()
+    protected override void InitializeValues()
     {
         _currentSpeed    = MoveSpeed;
         _aimDistance     = (_aimLookTarget.position - _aimCameraPosition.position).magnitude;
         _currentDistance = _targetDistance = Mathf.Abs(PlayerCamera.transform.position.z - _cameraLookTarget.position.z);
     }
+    #endregion
 
+
+
+
+
+    #region FUNCTIONS
     private void InitializeStateMachine()
     {
         StateMachine = new JStateMachine<PlayerController>(this);
@@ -294,6 +313,13 @@ public class PlayerController : MonoBehaviour
         _controller.Move(_velocity * Time.deltaTime);
     }
 
+    private void BulletCountCheck(BulletCountCheckEvent e)
+    {
+        _hasBullet = e.Value;
+    }
+
+
+
 
 
     #region INPUT
@@ -382,34 +408,45 @@ public class PlayerController : MonoBehaviour
 
     private void OnShot()
     {
-        if (_isAiming == false)
-        {
-            StateMachine.ChangeState(AimState);
-            _isAiming = true;
-        }
-
+        // 일단 쐈다고 신호를 보내고
         JEventManager.SendEvent(new ShotEvent(_shotPoint.position, _shotPoint.rotation));
 
-        JAudioManager.Instance.PlaySFX("Rifle_Shot");
+        // 무기측에서 총알이 있다고 신호를 보내오면 그 때 실행해주는 모양이면 될듯
+        if (_hasBullet == true)
+        {
+            // 기본 상태일 때 바로 조준 상태로 바꿔줌
+            if (_isAiming == false)
+            {
+                StateMachine.ChangeState(AimState);
+                _isAiming = true;
+            }
+            // Pitch 제한
+            {
+                _amingPitch -= Time.deltaTime * RifleRecoilRate;
+                _amingPitch = Mathf.Clamp(_amingPitch, -_amingPitchClamp, _amingPitchClamp);
+            }
+            // 카메라 흔들림 이펙트
+            {
+                StartCoroutine(CameraShake());
+            }
 
-        Animator.Play("AimIdle_Shoot", 1, 0f);
-
-        StartCoroutine(CameraShake());
-
-        _amingPitch -= Time.deltaTime * RifleRecoilRate;
-        _amingPitch = Mathf.Clamp(_amingPitch, -_amingPitchClamp, _amingPitchClamp);
+            Animator.Play("AimIdle_Shoot", 1, 0f);
+        }
     }
 
     private void OnReload()
     {
+        JEventManager.SendEvent(new ReloadEvent());
         Animator.Play("Reload", 1, 0f);
     }
     #endregion
 
 
 
+
+
     #region EFFECT
-    private IEnumerator CameraShake()
+    public IEnumerator CameraShake()
     {
         float elapsed = 0f;
 
@@ -433,8 +470,6 @@ public class PlayerController : MonoBehaviour
 
         if (speed > 0.1f)
         {
-            Debug.Log(speed);
-
             _stepTimer -= Time.deltaTime;
 
             float interval = 0f;

@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &4594177873971057975
+--- !u!1 &9165484357125667094
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,40 +8,40 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 7920558796842608656}
-  - component: {fileID: 8499741960400026979}
+  - component: {fileID: 5969625061487633043}
+  - component: {fileID: 2150752520336924641}
   m_Layer: 0
-  m_Name: BulletSpawner
+  m_Name: Rifle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &7920558796842608656
+--- !u!4 &5969625061487633043
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4594177873971057975}
+  m_GameObject: {fileID: 9165484357125667094}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -5.463499, y: 3.4177794, z: 3.4956427}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &8499741960400026979
+--- !u!114 &2150752520336924641
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4594177873971057975}
+  m_GameObject: {fileID: 9165484357125667094}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6493760227d33c746a3d96a7d972bcc3, type: 3}
+  m_Script: {fileID: 11500000, guid: b6faceb6ccb27d14c9cb9158ea142cae, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Bullet: {fileID: 1099989291834194, guid: 831508efc40187645bc17e16b4f37501, type: 3}
+  MaxMagazineCapacity: 30

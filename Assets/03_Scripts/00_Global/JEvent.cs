@@ -1,16 +1,6 @@
 using UnityEngine;
 
-
-public class ButtonClickEvent
-{
-    public int Value;
-
-    public ButtonClickEvent(int valuie)
-    {
-        Value = valuie;
-    }
-}
-
+#region PLAYER
 public class SwitchAimingModeEvent
 {
     public bool Value;
@@ -32,3 +22,37 @@ public class ShotEvent
         Rotation = shotRotation;
     }
 }
+
+public class ReloadEvent
+{
+}
+
+public class BulletCountCheckEvent
+{
+    public bool Value;
+
+    public BulletCountCheckEvent(bool value)
+    {
+        Value = value;
+    }
+}
+#endregion
+
+
+
+
+
+#region UI
+public class BulletCountChangeEvent
+{
+    public int MaxBulletCount;
+    public int CurrentBulletCount;
+
+    public BulletCountChangeEvent(int maxBulletCount, int currentBulletCount)
+    {
+        MaxBulletCount     = maxBulletCount;
+        CurrentBulletCount = currentBulletCount;
+    }
+}
+#endregion
+

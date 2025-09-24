@@ -45,5 +45,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   AudioMixer: {fileID: 24100000, guid: e616777ad3cd3884290039434ece0750, type: 2}
-  BGM_ClipList: []
-  SFX_ClipList: []
+  BGM_ClipList:
+  - {fileID: 8300000, guid: 94b270d7082728e49910c3030df56382, type: 3}
+  SFX_ClipList:
+  - {fileID: 8300000, guid: f5b8a6095559a5c4aacad23ad55e3302, type: 3}
+  - {fileID: 8300000, guid: a23d61de6faea0543a9781022771b0e7, type: 3}
+  - {fileID: 8300000, guid: ec93b3ab1e3185344870964b0ba5ac51, type: 3}
+  - {fileID: 8300000, guid: 9b722581f17e39c42908c37856f0623c, type: 3}
+  - {fileID: 8300000, guid: a27a3660913844a40b77e13fa265b286, type: 3}
+  - {fileID: 8300000, guid: c246822d8ab45a34aad5723dee4cecdf, type: 3}
+  - {fileID: 8300000, guid: bb7279bcfefa9c841ba488113d326a74, type: 3}
