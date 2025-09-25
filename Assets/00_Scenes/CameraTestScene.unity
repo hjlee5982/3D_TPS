@@ -128,6 +128,10 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 340058011008398703, guid: 84bfe0b3bdbf61a4e9e822019719847b, type: 3}
+      propertyPath: Delay
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 340058011008398703, guid: 84bfe0b3bdbf61a4e9e822019719847b, type: 3}
       propertyPath: PlayerCamera
       value: 
       objectReference: {fileID: 1840357557}
@@ -765,6 +769,14 @@ PrefabInstance:
     - target: {fileID: 6052243691260020399, guid: 23024a9cfe7f59a409969290553325d5, type: 3}
       propertyPath: m_Name
       value: CurrentBulletCounter
+      objectReference: {fileID: 0}
+    - target: {fileID: 8119603983167782976, guid: 23024a9cfe7f59a409969290553325d5, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -531.0215
+      objectReference: {fileID: 0}
+    - target: {fileID: 8119603983167782976, guid: 23024a9cfe7f59a409969290553325d5, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 212.92188
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

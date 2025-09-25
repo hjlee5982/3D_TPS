@@ -69,8 +69,8 @@ public class JInputManager : MonoBehaviour
     public  Action<bool>    OnWalk;
     public  Action          OnJump;
     public  Action          OnAimm;
-    public  Action          OnShot;
-    public  Action          OnReload;
+    public  Action<bool>    OnShot;
+    public  Action<bool>    OnReload;
 
     [Header("홀딩 인풋 플래그")]
     private bool  _isHolding     = false;
@@ -123,7 +123,7 @@ public class JInputManager : MonoBehaviour
 
         if(_isHolding == true && Time.time >= _nextInputTime)
         {
-            OnShot?.Invoke();
+            OnShot?.Invoke(true);
             _nextInputTime = Time.time + _interval;
         }
     }
@@ -201,11 +201,13 @@ public class JInputManager : MonoBehaviour
             Aimm.performed += ctx => OnAimm?.Invoke();
             
             Reload = InputActions.FindAction("Reload");
-            Reload.performed += ctx => OnReload?.Invoke();
+            Reload.started  += ctx => OnReload?.Invoke(true);
 
             Shot = InputActions.FindAction("Shot");
-            Shot.started  += ctx => _isHolding = true;
-            Shot.canceled += ctx => _isHolding = false;
+            Shot.started  += ctx => { _isHolding = true; };
+            Shot.canceled += ctx => { _isHolding = false; OnShot?.Invoke(false); };
+
+
         }
         // 키세팅을 바꿀 수 있는 키들은 한번 감싸서 초기화
         {
@@ -232,7 +234,7 @@ public class JInputManager : MonoBehaviour
         }
     }
     
-    public void BindButtonAction(Action<Vector3> move, Action<bool> dash, Action<bool> walk, Action jump, Action aimm, Action Reload)
+    public void BindButtonAction(Action<Vector3> move, Action<bool> dash, Action<bool> walk, Action jump, Action aimm, Action<bool> Reload)
     {
         OnMove   += move;
         OnDash   += dash;
@@ -242,7 +244,7 @@ public class JInputManager : MonoBehaviour
         OnReload += Reload;
     }
 
-    public void BindHoldingAction(Action hold, float interval)
+    public void BindHoldingAction(Action<bool> hold, float interval)
     {
         OnShot += hold;
         _interval = interval;

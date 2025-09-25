@@ -93,8 +93,14 @@ public class PlayerController : JBaseClass
     private float _aimRunInterval  = 0.4f;
     private float _aimDashInterval = 0.27f;
 
+
     [Header("총알 확인 변수")]
     private bool _hasBullet = true;
+
+
+    [Header("발사, 재장전 상태 확인 변수")]
+    private bool _isShot   = false;
+    private bool _isReload = false;
     #endregion
 
 
@@ -406,8 +412,21 @@ public class PlayerController : JBaseClass
         }
     }
 
-    private void OnShot()
+    private void OnShot(bool isShot)
     {
+        // 장전 상태일 땐 발포를 못함
+        if (_isReload == true)
+        {
+            return;
+        }
+
+        _isShot = isShot;
+
+        if(_isShot == false)
+        {
+            return;
+        }
+
         // 일단 쐈다고 신호를 보내고
         JEventManager.SendEvent(new ShotEvent(_shotPoint.position, _shotPoint.rotation));
 
@@ -434,10 +453,25 @@ public class PlayerController : JBaseClass
         }
     }
 
-    private void OnReload()
+    private void OnReload(bool isReload)
     {
+        // 발포 상태일 땐 재장전이 안됨
+        if(_isShot == true)
+        {
+            return;
+        }
+
+        if(_isReload == true)
+        {
+            return;
+        }
+
+        _isReload = true;
+
         JEventManager.SendEvent(new ReloadEvent());
         Animator.Play("Reload", 1, 0f);
+
+        StartCoroutine(ReloadDelay()); 
     }
     #endregion
 
@@ -446,7 +480,7 @@ public class PlayerController : JBaseClass
 
 
     #region EFFECT
-    public IEnumerator CameraShake()
+    private IEnumerator CameraShake()
     {
         float elapsed = 0f;
 
@@ -462,6 +496,20 @@ public class PlayerController : JBaseClass
 
         elapsed = 0;
         _cameraShakeOffset = Vector3.zero;
+    }
+
+    private IEnumerator ReloadDelay()
+    {
+        float elapsed = 0f;
+
+        while(elapsed < 0.8f)
+        {
+            elapsed += Time.deltaTime;
+
+            yield return null;
+        }
+
+        _isReload = false;
     }
 
     private void PlayerFootStepSound()

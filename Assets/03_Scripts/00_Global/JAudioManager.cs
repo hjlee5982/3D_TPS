@@ -365,13 +365,15 @@ public class JAudioManager : MonoBehaviour
 
     public void PlaySFX(string name, bool fadeEffect = false, float duration = 1f)
     {
+        // interval : 소리가 재생되고 있을 땐 간격을 두고 재생시키기
+
         if(SFX_Clips.TryGetValue(name, out AudioClip clip) == true)
         {
             AudioSource availableAudioSource = GetAvailableSFXSource();
-
+            
             if (availableAudioSource != null)
             {
-                if(fadeEffect == true)
+                if (fadeEffect == true)
                 {
                     StartCoroutine(FadeSFX(availableAudioSource, clip, duration));
                 }
