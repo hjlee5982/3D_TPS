@@ -25,6 +25,12 @@ public class ShotEvent
 
 public class ReloadEvent
 {
+    public float ReloadDelay;
+
+    public ReloadEvent(float reloadDelay)
+    {
+        ReloadDelay = reloadDelay;
+    }
 }
 
 public class BulletCountCheckEvent
@@ -45,13 +51,15 @@ public class BulletCountCheckEvent
 #region UI
 public class BulletCountChangeEvent
 {
-    public int MaxBulletCount;
-    public int CurrentBulletCount;
+    public int   MaxBulletCount;
+    public int   CurrentBulletCount;
+    public float Delay;
 
-    public BulletCountChangeEvent(int maxBulletCount, int currentBulletCount)
+    public BulletCountChangeEvent(int maxBulletCount, int currentBulletCount, float delay = 0f)
     {
         MaxBulletCount     = maxBulletCount;
         CurrentBulletCount = currentBulletCount;
+        Delay              = delay;
     }
 }
 #endregion

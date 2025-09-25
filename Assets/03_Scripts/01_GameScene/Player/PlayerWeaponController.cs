@@ -104,7 +104,7 @@ public class PlayerWeaponController : JBaseClass
     {
         if(_currentWeapon is RangedWeapon weapon)
         {
-            weapon.Reload();
+            weapon.Reload(e);
         }
     }
 

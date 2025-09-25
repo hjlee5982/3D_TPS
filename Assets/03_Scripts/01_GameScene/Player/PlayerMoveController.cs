@@ -99,8 +99,9 @@ public class PlayerController : JBaseClass
 
 
     [Header("발사, 재장전 상태 확인 변수")]
-    private bool _isShot   = false;
-    private bool _isReload = false;
+    private bool  _isShot      = false;
+    private bool  _isReload    = false;
+    private float _reloadDelay = 0.8f;
     #endregion
 
 
@@ -468,10 +469,16 @@ public class PlayerController : JBaseClass
 
         _isReload = true;
 
-        JEventManager.SendEvent(new ReloadEvent());
+        JEventManager.SendEvent(new ReloadEvent(_reloadDelay));
         Animator.Play("Reload", 1, 0f);
 
-        StartCoroutine(ReloadDelay()); 
+        // StartCoroutine(ReloadDelay());
+        Invoke(nameof(ReloadComplete), _reloadDelay);
+    }
+
+    private void ReloadComplete()
+    {
+        _isReload = false;
     }
     #endregion
 
@@ -498,19 +505,19 @@ public class PlayerController : JBaseClass
         _cameraShakeOffset = Vector3.zero;
     }
 
-    private IEnumerator ReloadDelay()
-    {
-        float elapsed = 0f;
+    //private IEnumerator ReloadDelay()
+    //{
+    //    float elapsed = 0f;
 
-        while(elapsed < 0.8f)
-        {
-            elapsed += Time.deltaTime;
+    //    while(elapsed < _reloadDelay)
+    //    {
+    //        elapsed += Time.deltaTime;
 
-            yield return null;
-        }
+    //        yield return null;
+    //    }
 
-        _isReload = false;
-    }
+    //    _isReload = false;
+    //}
 
     private void PlayerFootStepSound()
     {

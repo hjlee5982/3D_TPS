@@ -1,3 +1,4 @@
+using System.Collections;
 using TMPro;
 using UnityEngine;
 
@@ -63,8 +64,15 @@ public class UI_Magazine : JBaseClass
     #region FUNCTIONS
     private void OnDisplayValueChanged(BulletCountChangeEvent e)
     {
+        StartCoroutine(UpdateDelay(e));
+    }
+
+    private IEnumerator UpdateDelay(BulletCountChangeEvent e)
+    {
+        yield return new WaitForSeconds(e.Delay);
+
         _currentBulletCount.text = e.CurrentBulletCount.ToString();
-        _maxBulletCount    .text = e.MaxBulletCount    .ToString();
+        _maxBulletCount    .text = e.MaxBulletCount.ToString();
     }
     #endregion
 }

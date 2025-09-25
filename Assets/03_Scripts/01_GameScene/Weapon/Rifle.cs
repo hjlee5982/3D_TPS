@@ -51,10 +51,10 @@ public class Rifle : RangedWeapon
         }
     }
 
-    public override void Reload()
+    public override void Reload(ReloadEvent e)
     {
         _currentBulletCount = 30;
-        JEventManager.SendEvent(new BulletCountChangeEvent(MaxBulletCount, _currentBulletCount));
+        JEventManager.SendEvent(new BulletCountChangeEvent(MaxBulletCount, _currentBulletCount, e.ReloadDelay));
         JEventManager.SendEvent(new BulletCountCheckEvent(true));
         JAudioManager.Instance.PlaySFX("Rifle_Reload");
     }
