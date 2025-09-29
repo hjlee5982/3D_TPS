@@ -49,9 +49,11 @@ public class Rifle : RangedWeapon
         }
     }
 
-    public override void Shot(Bullet bulletPrefab, ShotEvent e)
+    public override void Shot(BulletSO bulletPrefab, ShotEvent e)
     {
-        Instantiate(bulletPrefab, e.Position, e.Rotation);
+        var projectile = bulletPrefab.Projectile;
+
+        Instantiate(projectile, e.Position, e.Rotation);
 
         JEventManager.SendEvent(new BulletCountChangeEvent(MaxBulletCount, --_currentBulletCount));
     }

@@ -15,7 +15,7 @@ public class JDataTransformer : EditorWindow
     {
         string gameDataPath = JDataPath.dataPath;
 
-        if(ConvertExcelToJson<ItemData>(gameDataPath, "ItemData") == false)
+        if(ConvertExcelToJson<BulletData>(gameDataPath, "BulletData") == false)
         {
             return;
         }

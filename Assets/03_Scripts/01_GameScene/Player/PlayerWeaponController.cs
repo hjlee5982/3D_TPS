@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerWeaponController : JBaseClass
@@ -6,9 +7,9 @@ public class PlayerWeaponController : JBaseClass
     [Header("ÇöÀç ¹«±â")]
     private Weapon _currentWeapon = null;
 
-    [Header("ÃÑ¾Ë ÇÁ¸®Æé")]
-    public  Bullet DefaultBulletPrefab  = null;
-    private Bullet _currentBulletPrefab = null;
+    [Header("ÃÑ¾Ë SO")]
+    public  List<BulletSO> BulletSOs = new List<BulletSO>();
+    private BulletSO _currentBulletPrefab = null;
 
     #endregion
 
@@ -28,7 +29,7 @@ public class PlayerWeaponController : JBaseClass
 
     protected override void InitializeValues()
     {
-        _currentBulletPrefab = DefaultBulletPrefab;        
+        _currentBulletPrefab = BulletSOs[0];        
     }
     #endregion
 
@@ -46,6 +47,7 @@ public class PlayerWeaponController : JBaseClass
     private void Start()
     {
         InitializeValues();
+        InitializeInputActions();
     }
 
     private void OnEnable()
@@ -66,6 +68,11 @@ public class PlayerWeaponController : JBaseClass
 
 
     #region FUNCTIONS
+    private void InitializeInputActions()
+    {
+        JInputManager.Instance.BindSlotAction(OnSlot1, OnSlot2, OnSlot3);
+    }
+
     private bool OnShot(ShotEvent e)
     {
         if(_currentWeapon is RangedWeapon weapon)
@@ -86,9 +93,23 @@ public class PlayerWeaponController : JBaseClass
         return true;
     }
 
+    private void OnSlot1()
+    {
+        Debug.Log("1¹ø ½½·Ô");
+        _currentBulletPrefab = BulletSOs[0];
+    }
 
+    private void OnSlot2()
+    {
+        Debug.Log("2¹ø ½½·Ô");
+        _currentBulletPrefab = BulletSOs[1];
+    }
 
-
+    private void OnSlot3()
+    {
+        Debug.Log("3¹ø ½½·Ô");
+        _currentBulletPrefab = BulletSOs[2];
+    }
 
     //[Header("ÃÑ¾Ë Ç®")]
     //private Queue<Bullet> _bulletPool   = new Queue<Bullet>();

@@ -52,31 +52,53 @@ public class JInputManager : MonoBehaviour
     [Header("인풋액션 에셋")]
     public InputActionAsset InputActions;
 
-    [Header("기본 인풋액션")]
-    private InputAction Move;
-    private InputAction Look;
-    private InputAction Zoom;
-    private InputAction Dash;
-    private InputAction Walk;
-    private InputAction Jump;
-    private InputAction Aimm;
-    private InputAction Shot;
-    private InputAction Reload;
+
+    [Header("액션 리스트")]
+    private List<InputAction> _inputActions = new List<InputAction>();
+
+
+    [Header("캐릭터")]
     public  Action<Vector3> OnMove;
-    public  Action<Vector2> OnLook;
-    public  Action<float>   OnZoom;
     public  Action<bool>    OnDash;
     public  Action<bool>    OnWalk;
     public  Action          OnJump;
-    public  Action          OnAimm;
-    public  Action<bool>    OnShot;
-    public  Action    OnReload;
+    private InputAction       Move;
+    private InputAction       Dash;
+    private InputAction       Walk;
+    private InputAction       Jump;
+
+
+    [Header("카메라")]
+    public  Action<Vector2> OnLook;
+    public  Action<float>   OnZoom;
+    private InputAction       Look;
+    private InputAction       Zoom;
+
+
+    [Header("사격")]
+    public  Action       OnAimm;
+    public  Action<bool> OnShot;
+    public  Action       OnReload;
+    private InputAction    Aimm;
+    private InputAction    Shot;
+    private InputAction    Reload;
+
+
+    [Header("무기 슬롯")]
+    public  Action OnSlot1;
+    public  Action OnSlot2;
+    public  Action OnSlot3;
+    private InputAction Slot1;
+    private InputAction Slot2;
+    private InputAction Slot3;
+
 
     [Header("홀딩 인풋 플래그")]
     private bool  _isHolding     = false;
     private float _interval      = 0.1f;
     private float _nextInputTime = 0f;
     
+
     [Header("커스텀 인풋액션")]
     public Dictionary<string, RebindableInputAction> _inputActionDict = new Dictionary<string, RebindableInputAction>();
     #endregion
@@ -132,16 +154,12 @@ public class JInputManager : MonoBehaviour
     {
         // JEventManager.Subscribe<StartRebindKeyEvent>(OnRebindKeyEvent);
 
-        Move.Enable();
-        Look.Enable();
-        Zoom.Enable();
-        Dash.Enable();
-        Walk.Enable();
-        Jump.Enable();
-        Shot.Enable();
-        Reload.Enable();
+        foreach (InputAction action in _inputActions)
+        {
+            action.Enable();
+        }
 
-        foreach(RebindableInputAction action in _inputActionDict.Values)
+        foreach (RebindableInputAction action in _inputActionDict.Values)
         {
             action.Action.Enable();
         }
@@ -151,14 +169,10 @@ public class JInputManager : MonoBehaviour
     {
         // JEventManager.Unsubscribe<StartRebindKeyEvent>(OnRebindKeyEvent);
 
-        Move.Disable();
-        Look.Disable();
-        Zoom.Disable();
-        Dash.Disable();
-        Walk.Disable();
-        Jump.Disable();
-        Shot.Disable();
-        Reload.Disable();
+        foreach(InputAction action in _inputActions)
+        {
+            action.Disable();
+        }
 
         foreach (RebindableInputAction action in _inputActionDict.Values)
         {
@@ -177,37 +191,57 @@ public class JInputManager : MonoBehaviour
         // 키세팅을 바꿀 수 없는 키들은 바로 초기화
         {
             // 인풋액션 에셋에 정의되어 있는 액션을 가져옴
-            Move = InputActions.FindAction("Move");
-            Move.canceled += ctx => OnMove?.Invoke(Vector3.zero);
-
-            Look = InputActions.FindAction("Look");
-            Look.canceled += ctx => OnLook?.Invoke(Vector2.zero);
-
-            Zoom = InputActions.FindAction("Zoom");
-            Zoom.canceled += ctx => OnZoom?.Invoke(0f);
-
-            Dash = InputActions.FindAction("Dash");
-            Dash.performed += ctx => OnDash?.Invoke(true);
-            Dash.canceled  += ctx => OnDash?.Invoke(false);
-
-            Walk = InputActions.FindAction("Walk");
-            Walk.performed += ctx => OnWalk?.Invoke(true);
-            Walk.canceled  += ctx => OnWalk?.Invoke(false);
-
-            Jump = InputActions.FindAction("Jump");
-            Jump.performed += ctx => OnJump?.Invoke();
-
-            Aimm = InputActions.FindAction("Aiming");
-            Aimm.performed += ctx => OnAimm?.Invoke();
-            
-            Reload = InputActions.FindAction("Reload");
-            Reload.started  += ctx => OnReload?.Invoke();
-
-            Shot = InputActions.FindAction("Shot");
-            Shot.started  += ctx => { _isHolding = true; };
-            Shot.canceled += ctx => { _isHolding = false; OnShot?.Invoke(false); };
-
-
+            {
+                _inputActions.Add(Move = InputActions.FindAction("Move"));
+                Move.canceled += ctx => OnMove?.Invoke(Vector3.zero);
+            }
+            {
+                _inputActions.Add(Dash = InputActions.FindAction("Dash"));
+                Dash.performed += ctx => OnDash?.Invoke(true);
+                Dash.canceled  += ctx => OnDash?.Invoke(false);
+            }
+            {
+                _inputActions.Add(Walk = InputActions.FindAction("Walk"));
+                Walk.performed += ctx => OnWalk?.Invoke(true);
+                Walk.canceled  += ctx => OnWalk?.Invoke(false);
+            }
+            {
+                _inputActions.Add(Jump = InputActions.FindAction("Jump"));
+                Jump.performed += ctx => OnJump?.Invoke();
+            }
+            {
+                _inputActions.Add(Look = InputActions.FindAction("Look"));
+                Look.canceled += ctx => OnLook?.Invoke(Vector2.zero);
+            }
+            {
+                _inputActions.Add(Zoom = InputActions.FindAction("Zoom"));
+                Zoom.canceled += ctx => OnZoom?.Invoke(0f);
+            }
+            {
+                _inputActions.Add(Aimm = InputActions.FindAction("Aiming"));
+                Aimm.performed += ctx => OnAimm?.Invoke();
+            }
+            {
+                _inputActions.Add(Reload = InputActions.FindAction("Reload"));
+                Reload.started += ctx => OnReload?.Invoke();
+            }
+            {
+                _inputActions.Add(Shot = InputActions.FindAction("Shot"));
+                Shot.started  += ctx => { _isHolding = true; };
+                Shot.canceled += ctx => { _isHolding = false; OnShot?.Invoke(false); };
+            }
+            {
+                _inputActions.Add(Slot1 = InputActions.FindAction("Slot1"));
+                Slot1.performed += ctx => OnSlot1?.Invoke();
+            }
+            {
+                _inputActions.Add(Slot2 = InputActions.FindAction("Slot2"));
+                Slot2.performed += ctx => OnSlot2?.Invoke();
+            }
+            {
+                _inputActions.Add(Slot3 = InputActions.FindAction("Slot3"));
+                Slot3.performed += ctx => OnSlot3?.Invoke();
+            }
         }
         // 키세팅을 바꿀 수 있는 키들은 한번 감싸서 초기화
         {
@@ -234,7 +268,7 @@ public class JInputManager : MonoBehaviour
         }
     }
     
-    public void BindButtonAction(Action<Vector3> move, Action<bool> dash, Action<bool> walk, Action jump, Action aimm, Action Reload)
+    public void BindCharacterAction(Action<Vector3> move, Action<bool> dash, Action<bool> walk, Action jump, Action aimm, Action Reload)
     {
         OnMove   += move;
         OnDash   += dash;
@@ -243,8 +277,8 @@ public class JInputManager : MonoBehaviour
         OnAimm   += aimm;
         OnReload += Reload;
     }
-
-    public void BindHoldingAction(Action<bool> hold, float interval)
+    
+    public void BindKeyHoldingAction(Action<bool> hold, float interval)
     {
         OnShot += hold;
         _interval = interval;
@@ -254,6 +288,13 @@ public class JInputManager : MonoBehaviour
     {
         OnLook += look;
         OnZoom += zoom;
+    }
+
+    public void BindSlotAction(Action slot1, Action slot2, Action slot3)
+    {
+        OnSlot1 += slot1;
+        OnSlot2 += slot2;
+        OnSlot3 += slot3;
     }
 
     public void BindKey(Action callback, string actionName)

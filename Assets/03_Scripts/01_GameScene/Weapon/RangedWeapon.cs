@@ -1,5 +1,7 @@
 
 // 원거리 무기
+using UnityEngine;
+
 public abstract class RangedWeapon : Weapon
 {
     public    int MaxBulletCount      = 30; // 최대 탄창
@@ -8,7 +10,7 @@ public abstract class RangedWeapon : Weapon
     protected abstract bool RequestShot(RequestShotEvent e);
     protected abstract bool RequestReload(RequestReloadEvent e);
 
-    public abstract void Shot(Bullet bulletPrefab, ShotEvent e);
+    public abstract void Shot(BulletSO bulletPrefab, ShotEvent e);
     public abstract void Reload(ReloadEvent e);
 
 }

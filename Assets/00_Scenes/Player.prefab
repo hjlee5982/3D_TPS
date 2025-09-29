@@ -5929,7 +5929,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2d27f61f12984d4459b20e12e38a084d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DefaultBulletPrefab: {fileID: 1376721337580053718, guid: 61e64381ba3a1dc45a5eadd716bba82b, type: 3}
+  BulletSOs:
+  - {fileID: 11400000, guid: 943871ed6cd567e469ad5d5955efd8e0, type: 2}
+  - {fileID: 11400000, guid: 7ae9c433988019f4eba6c756fa32370c, type: 2}
+  - {fileID: 11400000, guid: 7ff97043b36618c4a92bf82f6338c6a4, type: 2}
 --- !u!114 &340058011008398703
 MonoBehaviour:
   m_ObjectHideFlags: 0

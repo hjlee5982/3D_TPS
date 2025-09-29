@@ -1,40 +1,9 @@
-using System.Collections.Generic;
 using UnityEngine;
 
-public class Bullet : JBaseClass
+public class Bullet : MonoBehaviour
 {
     #region VARIABLES
-    #endregion
-
-
-
-
-
-    #region OVERRIDE
-    protected override void InitializeComponents()
-    {
-    }
-
-    protected override void InitializeTransforms()
-    {
-    }
-
-    protected override void InitializeValues()
-    {
-    }
-    #endregion
-
-
-
-
-
-    #region MONOBEHAVIOUR
-    #endregion
-
-
-
-
-
-    #region FUNCTIONS
+    [Header("ÃÑ¾Ë SO")]
+    public BulletSO BulletSO;
     #endregion
 }

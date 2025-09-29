@@ -173,8 +173,8 @@ public class PlayerController : JBaseClass
 
     private void InitializeInputActions()
     {
-        JInputManager.Instance.BindButtonAction(OnMove, OnDash, OnWalk, OnJump, OnAiming, OnReload);
-        JInputManager.Instance.BindHoldingAction(OnShot, 0.1f);
+        JInputManager.Instance.BindCharacterAction(OnMove, OnDash, OnWalk, OnJump, OnAiming, OnReload);
+        JInputManager.Instance.BindKeyHoldingAction(OnShot, 0.1f);
         JInputManager.Instance.BindCameraAction(OnLook, OnZoom);
     }
 

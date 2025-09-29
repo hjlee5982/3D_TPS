@@ -48,7 +48,7 @@ public class JDataManager : MonoBehaviour
     public Dictionary<string, TextAsset> JsonData = new Dictionary<string, TextAsset>();
 
     [Header("Json Dictionary")]
-    public Dictionary<string, ItemData>    ItemData    { get; private set; } = new Dictionary<string, ItemData>();
+    public Dictionary<string, BulletData> BulletData { get; private set; } = new Dictionary<string, BulletData>();
 
     #endregion
 
@@ -83,7 +83,7 @@ public class JDataManager : MonoBehaviour
     private void InitializeDictionary()
     {
         // 개별 json에서 로드
-        ItemData    = LoadJsonToDictionary<string, ItemData>   ("ItemData",    m => m.StringKey);
+        BulletData = LoadJsonToDictionary<string, BulletData>   ("BulletData",    m => m.StringKey);
     }
 
     private Dictionary<TKey, TValue> LoadJsonToDictionary<TKey, TValue>(string fileName, Func<TValue, TKey> keySelector)

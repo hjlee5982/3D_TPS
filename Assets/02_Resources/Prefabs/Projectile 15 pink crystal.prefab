@@ -14,9 +14,8 @@ GameObject:
   - component: {fileID: 54529894203811444}
   - component: {fileID: 135445653742605116}
   - component: {fileID: 9012120282846690442}
-  - component: {fileID: 1376721337580053718}
   m_Layer: 0
-  m_Name: DefaultBullet
+  m_Name: Projectile 15 pink crystal
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -199,18 +198,6 @@ MonoBehaviour:
   m_LightCookieSize: {x: 1, y: 1}
   m_LightCookieOffset: {x: 0, y: 0}
   m_SoftShadowQuality: 0
---- !u!114 &1376721337580053718
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1099989291834194}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: db2349bb2dd84f74e888b4f12f9af5d3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &731926822386886896
 GameObject:
   m_ObjectHideFlags: 0

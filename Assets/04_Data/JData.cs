@@ -6,19 +6,8 @@ public abstract class BaseData
     public int    IntKey;
 }
 
-
-
 [Serializable]
-public class ItemData : BaseData
+public class BulletData : BaseData
 {
-    public enum ItemType
-    {
-        ShortRange,
-        LongRange
-    }
-
-    public string   ItemNameKR;
-    public string   ItemNameEN;
-    public ItemType Type;
-    public int      AtkPower;
+    public float Atk;
 }
