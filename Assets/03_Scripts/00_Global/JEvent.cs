@@ -11,6 +11,7 @@ public class SwitchAimingModeEvent
     }
 }
 
+public class RequestShotEvent { }
 public class ShotEvent
 {
     public Vector3 Position;
@@ -23,6 +24,7 @@ public class ShotEvent
     }
 }
 
+public class RequestReloadEvent{ }
 public class ReloadEvent
 {
     public float ReloadDelay;
@@ -30,16 +32,6 @@ public class ReloadEvent
     public ReloadEvent(float reloadDelay)
     {
         ReloadDelay = reloadDelay;
-    }
-}
-
-public class BulletCountCheckEvent
-{
-    public bool Value;
-
-    public BulletCountCheckEvent(bool value)
-    {
-        Value = value;
     }
 }
 #endregion
@@ -63,4 +55,3 @@ public class BulletCountChangeEvent
     }
 }
 #endregion
-

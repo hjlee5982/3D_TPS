@@ -3,10 +3,8 @@ using UnityEngine;
 public class Rifle : RangedWeapon
 {
     #region VARIABLES
-    [Header("무기 정보")]
-    public  int MaxBulletCount      = 30; // 최대 탄창
-    private int _currentBulletCount = 30; // 현재 탄창
     #endregion
+
 
 
 
@@ -24,38 +22,44 @@ public class Rifle : RangedWeapon
     {
         JEventManager.SendEvent(new BulletCountChangeEvent(MaxBulletCount, _currentBulletCount));
     }
-    #endregion
 
-
-
-
-
-    #region INTERFACE
-    public override void Shot(Bullet bulletPrefab, ShotEvent e)
+    protected override bool RequestShot(RequestShotEvent e)
     {
-        if (_currentBulletCount == 0)
+        if (_currentBulletCount != 0)
         {
-            JAudioManager.Instance.PlaySFX("Rifle_Empty");
+            JAudioManager.Instance.PlaySFX("Rifle_Shot");
+            return true;
         }
         else
         {
-            Instantiate(bulletPrefab, e.Position, e.Rotation);
-
-            JEventManager.SendEvent(new BulletCountChangeEvent(MaxBulletCount, --_currentBulletCount));
-            JAudioManager.Instance.PlaySFX("Rifle_Shot");
-
-            if (_currentBulletCount == 0)
-            {
-                JEventManager.SendEvent(new BulletCountCheckEvent(false));
-            }
+            JAudioManager.Instance.PlaySFX("Rifle_Empty");
+            return false;
         }
+    }
+
+    protected override bool RequestReload(RequestReloadEvent e)
+    {
+        if (_currentBulletCount != MaxBulletCount)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    public override void Shot(Bullet bulletPrefab, ShotEvent e)
+    {
+        Instantiate(bulletPrefab, e.Position, e.Rotation);
+
+        JEventManager.SendEvent(new BulletCountChangeEvent(MaxBulletCount, --_currentBulletCount));
     }
 
     public override void Reload(ReloadEvent e)
     {
         _currentBulletCount = 30;
         JEventManager.SendEvent(new BulletCountChangeEvent(MaxBulletCount, _currentBulletCount, e.ReloadDelay));
-        JEventManager.SendEvent(new BulletCountCheckEvent(true));
         JAudioManager.Instance.PlaySFX("Rifle_Reload");
     }
     #endregion
@@ -74,6 +78,18 @@ public class Rifle : RangedWeapon
     private void Start()
     {
         InitializeValues();
+    }
+
+    private void OnEnable()
+    {
+        JEventManager.Subscribe<RequestShotEvent>(RequestShot);   
+        JEventManager.Subscribe<RequestReloadEvent>(RequestReload);
+    }
+
+    private void OnDisable()
+    {
+        JEventManager.Unsubscribe<RequestShotEvent>(RequestShot);
+        JEventManager.Unsubscribe<RequestReloadEvent>(RequestReload);
     }
     #endregion
 

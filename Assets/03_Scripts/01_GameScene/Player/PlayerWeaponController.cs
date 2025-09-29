@@ -1,25 +1,15 @@
-using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerWeaponController : JBaseClass
 {
     #region VARIABLES
-    [Header("¹«±â ½½·Ô")]
-    public  List<Weapon> WeaponPrefabs       = new List<Weapon>();
-    private int          _currentWeaponIndex = 0;
-
     [Header("ÇöÀç ¹«±â")]
-    private Transform _weaponParent  = null;
-    private Weapon    _currentWeapon = null;
+    private Weapon _currentWeapon = null;
 
     [Header("ÃÑ¾Ë ÇÁ¸®Æé")]
     public  Bullet DefaultBulletPrefab  = null;
     private Bullet _currentBulletPrefab = null;
 
-    //[Header("ÃÑ¾Ë Ç®")]
-    //private Queue<Bullet> _bulletPool   = new Queue<Bullet>();
-    //private Transform     _bulletParent = null;
-    //private int           _poolSize     = 10;
     #endregion
 
 
@@ -29,32 +19,16 @@ public class PlayerWeaponController : JBaseClass
     #region OVERRIDE
     protected override void InitializeComponents()
     {
+        _currentWeapon = GetComponent<Weapon>();
     }
 
     protected override void InitializeTransforms()
     {
-        _weaponParent = transform.Find("WeaponSlot");
-        // _bulletParent = transform.Find("BulletPool");
     }
 
     protected override void InitializeValues()
     {
-        _currentWeapon = Instantiate(WeaponPrefabs?[_currentWeaponIndex]);
-        _currentWeapon.transform.SetParent(_weaponParent);
-
-        _currentBulletPrefab = DefaultBulletPrefab;
-
-        //for (int i = 0; i < _poolSize; ++i)
-        //{
-        //    Bullet b = Instantiate(DefaultBulletPrefab);
-
-        //    b.CacheBulletPool(this);
-
-        //    b.transform.SetParent(_bulletParent);
-        //    b.gameObject.SetActive(false);
-
-        //    _bulletPool.Enqueue(b);
-        //}
+        _currentBulletPrefab = DefaultBulletPrefab;        
     }
     #endregion
 
@@ -92,25 +66,46 @@ public class PlayerWeaponController : JBaseClass
 
 
     #region FUNCTIONS
-    private void OnShot(ShotEvent e)
+    private bool OnShot(ShotEvent e)
     {
         if(_currentWeapon is RangedWeapon weapon)
         {
             weapon.Shot(_currentBulletPrefab, e);
         }
+
+        return true;
     }
 
-    private void OnReload(ReloadEvent e)
+    private bool OnReload(ReloadEvent e)
     {
         if(_currentWeapon is RangedWeapon weapon)
         {
             weapon.Reload(e);
         }
+
+        return true;
     }
 
 
 
 
+
+    //[Header("ÃÑ¾Ë Ç®")]
+    //private Queue<Bullet> _bulletPool   = new Queue<Bullet>();
+    //private Transform     _bulletParent = null;
+    //private int           _poolSize     = 10;
+
+    //for (int i = 0; i < _poolSize; ++i)
+    //{
+    //    Bullet b = Instantiate(DefaultBulletPrefab);
+
+    //    b.CacheBulletPool(this);
+
+    //    b.transform.SetParent(_bulletParent);
+    //    b.gameObject.SetActive(false);
+
+    //    _bulletPool.Enqueue(b);
+    //}
 
     //#region BULLETPOOL
     //private Bullet GetBullet(Vector3 position, Quaternion rotation)

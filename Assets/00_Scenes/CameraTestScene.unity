@@ -128,10 +128,6 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 340058011008398703, guid: 84bfe0b3bdbf61a4e9e822019719847b, type: 3}
-      propertyPath: Delay
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 340058011008398703, guid: 84bfe0b3bdbf61a4e9e822019719847b, type: 3}
       propertyPath: PlayerCamera
       value: 
       objectReference: {fileID: 1840357557}
@@ -174,6 +170,10 @@ PrefabInstance:
     - target: {fileID: 2380657114274441823, guid: 84bfe0b3bdbf61a4e9e822019719847b, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4323362595686696289, guid: 84bfe0b3bdbf61a4e9e822019719847b, type: 3}
+      propertyPath: m_Enabled
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6435638681282917914, guid: 84bfe0b3bdbf61a4e9e822019719847b, type: 3}
       propertyPath: m_Name

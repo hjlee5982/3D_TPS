@@ -70,7 +70,7 @@ public class JInputManager : MonoBehaviour
     public  Action          OnJump;
     public  Action          OnAimm;
     public  Action<bool>    OnShot;
-    public  Action<bool>    OnReload;
+    public  Action    OnReload;
 
     [Header("È¦µù ÀÎÇ² ÇÃ·¡±×")]
     private bool  _isHolding     = false;
@@ -201,7 +201,7 @@ public class JInputManager : MonoBehaviour
             Aimm.performed += ctx => OnAimm?.Invoke();
             
             Reload = InputActions.FindAction("Reload");
-            Reload.started  += ctx => OnReload?.Invoke(true);
+            Reload.started  += ctx => OnReload?.Invoke();
 
             Shot = InputActions.FindAction("Shot");
             Shot.started  += ctx => { _isHolding = true; };
@@ -234,7 +234,7 @@ public class JInputManager : MonoBehaviour
         }
     }
     
-    public void BindButtonAction(Action<Vector3> move, Action<bool> dash, Action<bool> walk, Action jump, Action aimm, Action<bool> Reload)
+    public void BindButtonAction(Action<Vector3> move, Action<bool> dash, Action<bool> walk, Action jump, Action aimm, Action Reload)
     {
         OnMove   += move;
         OnDash   += dash;

@@ -55,9 +55,11 @@ public class JUIManager : JBaseClass
 
 
     #region FUNCTIONS
-    private void SwitchCrossHair(SwitchAimingModeEvent e)
+    private bool SwitchCrossHair(SwitchAimingModeEvent e)
     {
         _crossHair.SetActive(e.Value);
+
+        return true;
     }
     #endregion
 }

@@ -93,11 +93,6 @@ public class PlayerController : JBaseClass
     private float _aimRunInterval  = 0.4f;
     private float _aimDashInterval = 0.27f;
 
-
-    [Header("총알 확인 변수")]
-    private bool _hasBullet = true;
-
-
     [Header("발사, 재장전 상태 확인 변수")]
     private bool  _isShot      = false;
     private bool  _isReload    = false;
@@ -129,16 +124,6 @@ public class PlayerController : JBaseClass
         UpdateCameraRaycasting();
         UpdatePlayerAnimation();
         PlayerFootStepSound();
-    }
-
-    private void OnEnable()
-    {
-        JEventManager.Subscribe<BulletCountCheckEvent>(BulletCountCheck);
-    }
-
-    private void OnDisable()
-    {
-        JEventManager.Unsubscribe<BulletCountCheckEvent>(BulletCountCheck);
     }
     #endregion
 
@@ -275,7 +260,7 @@ public class PlayerController : JBaseClass
 
     public void AmingTransformAdjust()
     {
-        // 조준 중 위, 아래를 바라보는 애니메이션이 없어서
+        // 조준 상태에서 위, 아래를 바라보는 애니메이션이 없어서
         // 정면을 조준하는 애니메이션에서 Spine과 Rifle을 회전시키기로 함
         {
             // X축 회전 쿼터니온
@@ -318,11 +303,6 @@ public class PlayerController : JBaseClass
         // 중력 적용
         _velocity.y += _gravity * Time.deltaTime;
         _controller.Move(_velocity * Time.deltaTime);
-    }
-
-    private void BulletCountCheck(BulletCountCheckEvent e)
-    {
-        _hasBullet = e.Value;
     }
 
 
@@ -415,67 +395,119 @@ public class PlayerController : JBaseClass
 
     private void OnShot(bool isShot)
     {
-        // 장전 상태일 땐 발포를 못함
-        if (_isReload == true)
+        // 인풋 수신
         {
-            return;
+            // 입력을 멈추면 canceled가 동작해서 두번 들어옴. 그거 막기용
+            if ((_isShot = isShot) == false)
+            {
+                return;
+            }
         }
-
-        _isShot = isShot;
-
-        if(_isShot == false)
+        // 내부 로직(조건)
         {
-            return;
-        }
+            // 장전 상태일 땐 발포를 못함
+            if (_isReload == true)
+            {
+                return;
+            }
 
-        // 일단 쐈다고 신호를 보내고
-        JEventManager.SendEvent(new ShotEvent(_shotPoint.position, _shotPoint.rotation));
-
-        // 무기측에서 총알이 있다고 신호를 보내오면 그 때 실행해주는 모양이면 될듯
-        if (_hasBullet == true)
-        {
             // 기본 상태일 때 바로 조준 상태로 바꿔줌
             if (_isAiming == false)
             {
                 StateMachine.ChangeState(AimState);
-                _isAiming = true;
+                Invoke("AnimationComplete", Time.fixedDeltaTime);
+                return;
             }
+
+            // 조준상태가 아니라면 못쏨
+            if (_isAiming == false)
+            {
+                return;
+            }
+        }
+        // 플레이어 -> 무기 통신
+        {
+            // 총알이 없으면 못쏨
+            if (JEventManager.SendEvent(new RequestShotEvent()) == true)
+            {
+                JEventManager.SendEvent(new ShotEvent(_shotPoint.position, _shotPoint.rotation));
+            }
+            else
+            {
+                return;
+            }
+        }
+        // 내부 로직(이펙트)
+        {
             // Pitch 제한
             {
                 _amingPitch -= Time.deltaTime * RifleRecoilRate;
                 _amingPitch = Mathf.Clamp(_amingPitch, -_amingPitchClamp, _amingPitchClamp);
             }
+
             // 카메라 흔들림 이펙트
             {
                 StartCoroutine(CameraShake());
             }
 
-            Animator.Play("AimIdle_Shoot", 1, 0f);
+            // 총 쏘기 애니메이션 재생
+            {
+                Animator.Play("AimIdle_Shoot", 1, 0f);
+            }
         }
     }
 
-    private void OnReload(bool isReload)
+    // 조준 애니메이션이 재생이 완료된 후 총을 쏴야 발포 위치가 정확하게 들어감
+    private void AnimationComplete()
     {
-        // 발포 상태일 땐 재장전이 안됨
-        if(_isShot == true)
-        {
-            return;
-        }
-
-        if(_isReload == true)
-        {
-            return;
-        }
-
-        _isReload = true;
-
-        JEventManager.SendEvent(new ReloadEvent(_reloadDelay));
-        Animator.Play("Reload", 1, 0f);
-
-        // StartCoroutine(ReloadDelay());
-        Invoke(nameof(ReloadComplete), _reloadDelay);
+        OnShot(_isAiming = true);
     }
 
+    private void OnReload()
+    {
+        // 내부 로직(조건)
+        {
+            // 발포 상태일 땐 재장전이 안됨
+            if (_isShot == true)
+            {
+                return;
+            }
+
+            // 재장전 애니메이션 도중엔 재장전 불가
+            if (_isReload == true)
+            {
+                return;
+            }
+
+            _isReload = true;
+        }
+        // 플레이어 -> 무기 통신
+        {
+            // 총알이 가득 차있으면 장전 못함
+            if (JEventManager.SendEvent(new RequestReloadEvent()) == true)
+            {
+                JEventManager.SendEvent(new ReloadEvent(_reloadDelay));
+            }
+            else
+            {
+                return;
+            }
+        }
+        // 내부 로직(이펙트)
+        {
+            // 재장전 딜레이
+            {
+                Invoke("ReloadComplete", _reloadDelay);
+            }
+
+            // 재장전 애니메이션 재생
+            {
+                Animator.Play("Reload", 1, 0f);
+            }
+        }
+    }
+
+    // 재장전 애니메이션이 끝날 때 장전상태 해제
     private void ReloadComplete()
     {
         _isReload = false;
@@ -504,20 +536,6 @@ public class PlayerController : JBaseClass
         elapsed = 0;
         _cameraShakeOffset = Vector3.zero;
     }
-
-    //private IEnumerator ReloadDelay()
-    //{
-    //    float elapsed = 0f;
-
-    //    while(elapsed < _reloadDelay)
-    //    {
-    //        elapsed += Time.deltaTime;
-
-    //        yield return null;
-    //    }
-
-    //    _isReload = false;
-    //}
 
     private void PlayerFootStepSound()
     {

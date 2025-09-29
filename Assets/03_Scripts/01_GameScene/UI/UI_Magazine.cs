@@ -62,9 +62,11 @@ public class UI_Magazine : JBaseClass
 
 
     #region FUNCTIONS
-    private void OnDisplayValueChanged(BulletCountChangeEvent e)
+    private bool OnDisplayValueChanged(BulletCountChangeEvent e)
     {
         StartCoroutine(UpdateDelay(e));
+
+        return true;
     }
 
     private IEnumerator UpdateDelay(BulletCountChangeEvent e)
