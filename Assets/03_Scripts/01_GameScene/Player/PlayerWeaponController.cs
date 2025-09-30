@@ -5,12 +5,12 @@ public class PlayerWeaponController : JBaseClass
 {
     #region VARIABLES
     [Header("ÇöÀç ¹«±â")]
-    private Weapon _currentWeapon = null;
+    private Weapon _currentWeapon     = null;
+    private int    _currentWeaponSlot = 0;
 
     [Header("ÃÑ¾Ë SO")]
-    public  List<BulletSO> BulletSOs = new List<BulletSO>();
-    private BulletSO _currentBulletPrefab = null;
-
+    public  List<BulletSO> BulletSOs            = new List<BulletSO>();
+    private BulletSO       _currentBulletPrefab = null;
     #endregion
 
 
@@ -54,12 +54,14 @@ public class PlayerWeaponController : JBaseClass
     {
         JEventManager.Subscribe<ShotEvent>(OnShot);
         JEventManager.Subscribe<ReloadEvent>(OnReload);
+        JEventManager.Subscribe<BulletChangeEvent>(OnBulletChange);
     }
 
     private void OnDisable()
     {
         JEventManager.Unsubscribe<ShotEvent>(OnShot);
         JEventManager.Unsubscribe<ReloadEvent>(OnReload);
+        JEventManager.Unsubscribe<BulletChangeEvent>(OnBulletChange);
     }
     #endregion
 
@@ -70,46 +72,46 @@ public class PlayerWeaponController : JBaseClass
     #region FUNCTIONS
     private void InitializeInputActions()
     {
-        JInputManager.Instance.BindSlotAction(OnSlot1, OnSlot2, OnSlot3);
     }
 
     private bool OnShot(ShotEvent e)
     {
         if(_currentWeapon is RangedWeapon weapon)
         {
-            weapon.Shot(_currentBulletPrefab, e);
+            return weapon.Shot(_currentBulletPrefab, e);
         }
 
-        return true;
+        return false;
     }
 
     private bool OnReload(ReloadEvent e)
     {
         if(_currentWeapon is RangedWeapon weapon)
         {
-            weapon.Reload(e);
+            return weapon.Reload(e);
         }
 
-        return true;
+        return false;
+    }
+    
+    private bool OnBulletChange(BulletChangeEvent e)
+    {
+        if(e.Slot == _currentWeaponSlot)
+        {
+            return false;
+        }
+        else
+        {
+            _currentWeaponSlot   = e.Slot;
+            _currentBulletPrefab = BulletSOs[_currentWeaponSlot];
+
+            JAudioManager.Instance.PlaySFX("Bullet_Change");
+
+            return true;
+        }
     }
 
-    private void OnSlot1()
-    {
-        Debug.Log("1¹ø ½½·Ô");
-        _currentBulletPrefab = BulletSOs[0];
-    }
-
-    private void OnSlot2()
-    {
-        Debug.Log("2¹ø ½½·Ô");
-        _currentBulletPrefab = BulletSOs[1];
-    }
-
-    private void OnSlot3()
-    {
-        Debug.Log("3¹ø ½½·Ô");
-        _currentBulletPrefab = BulletSOs[2];
-    }
+    
 
     //[Header("ÃÑ¾Ë Ç®")]
     //private Queue<Bullet> _bulletPool   = new Queue<Bullet>();

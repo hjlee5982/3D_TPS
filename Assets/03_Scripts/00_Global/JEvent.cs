@@ -1,6 +1,5 @@
 using UnityEngine;
 
-#region PLAYER
 public class SwitchAimingModeEvent
 {
     public bool Value;
@@ -11,7 +10,6 @@ public class SwitchAimingModeEvent
     }
 }
 
-public class RequestShotEvent { }
 public class ShotEvent
 {
     public Vector3 Position;
@@ -24,7 +22,6 @@ public class ShotEvent
     }
 }
 
-public class RequestReloadEvent{ }
 public class ReloadEvent
 {
     public float ReloadDelay;
@@ -34,13 +31,21 @@ public class ReloadEvent
         ReloadDelay = reloadDelay;
     }
 }
-#endregion
+
+public class BulletChangeEvent
+{
+    public int Slot;
+
+    public BulletChangeEvent(int slot)
+    {
+        Slot = slot;
+    }
+}
 
 
 
 
 
-#region UI
 public class BulletCountChangeEvent
 {
     public int   MaxBulletCount;
@@ -54,4 +59,3 @@ public class BulletCountChangeEvent
         Delay              = delay;
     }
 }
-#endregion

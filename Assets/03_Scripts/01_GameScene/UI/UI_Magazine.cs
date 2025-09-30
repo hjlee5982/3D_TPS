@@ -20,10 +20,12 @@ public class UI_Magazine : JBaseClass
         _currentBulletCount = transform.Find("CurrentBulletCounter").GetComponent<TextMeshProUGUI>();
         _maxBulletCount     = transform.Find("MaxBulletCounter")    .GetComponent<TextMeshProUGUI>();
     }
+
     protected override void InitializeTransforms()
     {
 
     }
+
     protected override void InitializeValues()
     {
 

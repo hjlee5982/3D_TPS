@@ -23,10 +23,13 @@ public class Rifle : RangedWeapon
         JEventManager.SendEvent(new BulletCountChangeEvent(MaxBulletCount, _currentBulletCount));
     }
 
-    protected override bool RequestShot(RequestShotEvent e)
+    public override bool Shot(BulletSO bulletPrefab, ShotEvent e)
     {
         if (_currentBulletCount != 0)
         {
+            Instantiate(bulletPrefab.Projectile, e.Position, e.Rotation);
+
+            JEventManager.SendEvent(new BulletCountChangeEvent(MaxBulletCount, --_currentBulletCount));
             JAudioManager.Instance.PlaySFX("Rifle_Shot");
             return true;
         }
@@ -37,32 +40,20 @@ public class Rifle : RangedWeapon
         }
     }
 
-    protected override bool RequestReload(RequestReloadEvent e)
+    public override bool Reload(ReloadEvent e)
     {
         if (_currentBulletCount != MaxBulletCount)
         {
+            _currentBulletCount = 30;
+            JEventManager.SendEvent(new BulletCountChangeEvent(MaxBulletCount, _currentBulletCount, e.ReloadDelay));
+            JAudioManager.Instance.PlaySFX("Rifle_Reload");
+
             return true;
         }
         else
         {
             return false;
         }
-    }
-
-    public override void Shot(BulletSO bulletPrefab, ShotEvent e)
-    {
-        var projectile = bulletPrefab.Projectile;
-
-        Instantiate(projectile, e.Position, e.Rotation);
-
-        JEventManager.SendEvent(new BulletCountChangeEvent(MaxBulletCount, --_currentBulletCount));
-    }
-
-    public override void Reload(ReloadEvent e)
-    {
-        _currentBulletCount = 30;
-        JEventManager.SendEvent(new BulletCountChangeEvent(MaxBulletCount, _currentBulletCount, e.ReloadDelay));
-        JAudioManager.Instance.PlaySFX("Rifle_Reload");
     }
     #endregion
 
@@ -80,18 +71,6 @@ public class Rifle : RangedWeapon
     private void Start()
     {
         InitializeValues();
-    }
-
-    private void OnEnable()
-    {
-        JEventManager.Subscribe<RequestShotEvent>(RequestShot);   
-        JEventManager.Subscribe<RequestReloadEvent>(RequestReload);
-    }
-
-    private void OnDisable()
-    {
-        JEventManager.Unsubscribe<RequestShotEvent>(RequestShot);
-        JEventManager.Unsubscribe<RequestReloadEvent>(RequestReload);
     }
     #endregion
 

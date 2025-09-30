@@ -176,6 +176,7 @@ public class PlayerController : JBaseClass
         JInputManager.Instance.BindCharacterAction(OnMove, OnDash, OnWalk, OnJump, OnAiming, OnReload);
         JInputManager.Instance.BindKeyHoldingAction(OnShot, 0.1f);
         JInputManager.Instance.BindCameraAction(OnLook, OnZoom);
+        JInputManager.Instance.BindSlotAction(OnSlot1, OnSlot2, OnSlot3);
     }
 
     private void UpdateStateMachine()
@@ -428,11 +429,7 @@ public class PlayerController : JBaseClass
         // 플레이어 -> 무기 통신
         {
             // 총알이 없으면 못쏨
-            if (JEventManager.SendEvent(new RequestShotEvent()) == true)
-            {
-                JEventManager.SendEvent(new ShotEvent(_shotPoint.position, _shotPoint.rotation));
-            }
-            else
+            if (JEventManager.SendEvent(new ShotEvent(_shotPoint.position, _shotPoint.rotation)) == false)
             {
                 return;
             }
@@ -478,15 +475,13 @@ public class PlayerController : JBaseClass
             {
                 return;
             }
-
-            _isReload = true;
         }
         // 플레이어 -> 무기 통신
         {
             // 총알이 가득 차있으면 장전 못함
-            if (JEventManager.SendEvent(new RequestReloadEvent()) == true)
+            if (JEventManager.SendEvent(new ReloadEvent(_reloadDelay)) == true)
             {
-                JEventManager.SendEvent(new ReloadEvent(_reloadDelay));
+                _isReload = true;
             }
             else
             {
@@ -511,6 +506,63 @@ public class PlayerController : JBaseClass
     private void ReloadComplete()
     {
         _isReload = false;
+    }
+
+    private void OnSlot1()
+    {
+        OnSlot(0);
+    }
+
+    private void OnSlot2()
+    {
+        OnSlot(1);
+    }
+
+    private void OnSlot3()
+    {
+        OnSlot(2);
+    }
+
+    private void OnSlot(int slot)
+    {
+        // 내부 로직(조건)
+        {
+            // 발포 상태일 땐 재장전이 안됨
+            if (_isShot == true)
+            {
+                return;
+            }
+
+            // 재장전 애니메이션 도중엔 재장전 불가
+            if (_isReload == true)
+            {
+                return;
+            }
+
+        }
+        // 플레이어 -> 무기 컨트롤러 통신
+        {
+            if (JEventManager.SendEvent(new BulletChangeEvent(slot)) == true)
+            {
+                _isReload = true;
+            }
+            else
+            {
+                return;
+            }
+        }
+        // 내부 로직(이펙트)
+        {
+            // 재장전 딜레이
+            {
+                Invoke("ReloadComplete", _reloadDelay);
+            }
+
+            // 재장전 애니메이션 재생
+            {
+                Animator.Play("Reload", 1, 0f);
+            }
+        }
     }
     #endregion
 

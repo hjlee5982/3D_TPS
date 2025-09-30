@@ -7,10 +7,7 @@ public abstract class RangedWeapon : Weapon
     public    int MaxBulletCount      = 30; // ÃÖ´ë ÅºÃ¢
     protected int _currentBulletCount = 30; // ÇöÀç ÅºÃ¢
 
-    protected abstract bool RequestShot(RequestShotEvent e);
-    protected abstract bool RequestReload(RequestReloadEvent e);
-
-    public abstract void Shot(BulletSO bulletPrefab, ShotEvent e);
-    public abstract void Reload(ReloadEvent e);
+    public abstract bool Shot(BulletSO bulletPrefab, ShotEvent e);
+    public abstract bool Reload(ReloadEvent e);
 
 }

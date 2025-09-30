@@ -762,18 +762,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: UIManager
       objectReference: {fileID: 0}
-    - target: {fileID: 6052243691260020399, guid: 23024a9cfe7f59a409969290553325d5, type: 3}
-      propertyPath: m_Name
-      value: CurrentBulletCounter
-      objectReference: {fileID: 0}
-    - target: {fileID: 8119603983167782976, guid: 23024a9cfe7f59a409969290553325d5, type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: -531.0215
-      objectReference: {fileID: 0}
-    - target: {fileID: 8119603983167782976, guid: 23024a9cfe7f59a409969290553325d5, type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: 212.92188
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
