@@ -1,11 +1,11 @@
 using System.Collections;
 using UnityEngine;
 
-public class PlayerController : JBaseClass
+public class PlayerInputController : JBaseClass
 {
     #region VARIABLES
     [Header("상태 머신")]
-    public JStateMachine<PlayerController> StateMachine { get; private set; } = null;
+    public JStateMachine<PlayerInputController> StateMachine { get; private set; } = null;
     public PlayerIdleState                 IdleState    { get; private set; } = null;
     public PlayerAimingState               AimState     { get; private set; } = null;
 
@@ -163,7 +163,7 @@ public class PlayerController : JBaseClass
     #region FUNCTIONS
     private void InitializeStateMachine()
     {
-        StateMachine = new JStateMachine<PlayerController>(this);
+        StateMachine = new JStateMachine<PlayerInputController>(this);
         {
             IdleState = new PlayerIdleState();
             AimState  = new PlayerAimingState();

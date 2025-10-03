@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class SwitchAimingModeEvent
@@ -48,14 +49,26 @@ public class BulletChangeEvent
 
 public class BulletCountChangeEvent
 {
-    public int   MaxBulletCount;
-    public int   CurrentBulletCount;
+    public int   ReserveBullet;
+    public int   LoadedBullet;
     public float Delay;
 
-    public BulletCountChangeEvent(int maxBulletCount, int currentBulletCount, float delay = 0f)
+    public BulletCountChangeEvent(int loadedBullet, int reserveBullet, float delay = 0f)
     {
-        MaxBulletCount     = maxBulletCount;
-        CurrentBulletCount = currentBulletCount;
-        Delay              = delay;
+        LoadedBullet  = loadedBullet;
+        ReserveBullet = reserveBullet;
+        Delay         = delay;
+    }
+}
+
+public class BulletSlotChangeEvent
+{
+    public int                  CurrentSlotIndex;
+    public List<BulletSlotDesc> BulletSlot = new List<BulletSlotDesc>();
+
+    public BulletSlotChangeEvent(int currentSlotIndex, List<BulletSlotDesc> bulletSlot)
+    {
+        CurrentSlotIndex = currentSlotIndex;
+        BulletSlot       = bulletSlot;
     }
 }

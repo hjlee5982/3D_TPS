@@ -5847,10 +5847,11 @@ GameObject:
   - component: {fileID: 5752227795840521004}
   - component: {fileID: 983451472834720795}
   - component: {fileID: 340058011008398703}
+  - component: {fileID: 8173384119757977997}
   - component: {fileID: 4323362595686696289}
   m_Layer: 6
   m_Name: Player
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -5959,6 +5960,18 @@ MonoBehaviour:
   MaxDistance: 4
   RifleRecoilRate: 50
   CameraRecoilRate: 0.05
+--- !u!114 &8173384119757977997
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6435638681282917914}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0547af14e107dc444940d29bedf6875f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!143 &4323362595686696289
 CharacterController:
   m_ObjectHideFlags: 0

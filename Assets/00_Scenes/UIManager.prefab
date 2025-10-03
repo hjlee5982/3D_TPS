@@ -74,8 +74,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4278190335
-  m_fontColor: {r: 1, g: 0, b: 0, a: 1}
+    rgba: 4278190080
+  m_fontColor: {r: 0, g: 0, b: 0, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -466,7 +466,7 @@ GameObject:
   - component: {fileID: 6471839460440346884}
   - component: {fileID: 6494872749936352233}
   m_Layer: 5
-  m_Name: MaxBulletCounter
+  m_Name: ReserveBulletCounter
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1082,7 +1082,7 @@ GameObject:
   - component: {fileID: 8217833698218639013}
   - component: {fileID: 7924061021883821891}
   m_Layer: 5
-  m_Name: CurrentBulletCounter
+  m_Name: LoadedBulletCounter
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

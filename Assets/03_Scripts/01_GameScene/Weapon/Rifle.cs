@@ -1,8 +1,12 @@
+using System.Collections;
 using UnityEngine;
+using UnityEngine.Assertions.Must;
 
 public class Rifle : RangedWeapon
 {
     #region VARIABLES
+    [Header("재장전 소리 딜레이")]
+    private bool _emptyInterval = false;
     #endregion
 
 
@@ -20,39 +24,67 @@ public class Rifle : RangedWeapon
 
     protected override void InitializeValues()
     {
-        JEventManager.SendEvent(new BulletCountChangeEvent(MaxBulletCount, _currentBulletCount));
     }
 
-    public override bool Shot(BulletSO bulletPrefab, ShotEvent e)
+    public override bool Shot(BulletSlotDesc bulletSlot, ShotEvent e)
     {
-        if (_currentBulletCount != 0)
+        if (bulletSlot.LoadedBullet != 0)
         {
-            Instantiate(bulletPrefab.Projectile, e.Position, e.Rotation);
+            Instantiate(bulletSlot.BulletSO.Projectile, e.Position, e.Rotation);
 
-            JEventManager.SendEvent(new BulletCountChangeEvent(MaxBulletCount, --_currentBulletCount));
+            JEventManager.SendEvent(new BulletCountChangeEvent(--bulletSlot.LoadedBullet, bulletSlot.ReserveBullet));
             JAudioManager.Instance.PlaySFX("Rifle_Shot");
+
             return true;
         }
         else
         {
-            JAudioManager.Instance.PlaySFX("Rifle_Empty");
+            if(_emptyInterval == false)
+            {
+                _emptyInterval = true;
+
+                JAudioManager.Instance.PlaySFX("Rifle_Empty");
+
+                Invoke("EmptySoundDelay", 0.5f);
+            }
             return false;
         }
     }
 
-    public override bool Reload(ReloadEvent e)
+    public override bool Reload(BulletSlotDesc bulletSlot, ReloadEvent e)
     {
-        if (_currentBulletCount != MaxBulletCount)
+        if (bulletSlot.ReserveBullet == 0)
         {
-            _currentBulletCount = 30;
-            JEventManager.SendEvent(new BulletCountChangeEvent(MaxBulletCount, _currentBulletCount, e.ReloadDelay));
-            JAudioManager.Instance.PlaySFX("Rifle_Reload");
+            if (_emptyInterval == false)
+            {
+                _emptyInterval = true;
 
-            return true;
+                JAudioManager.Instance.PlaySFX("Rifle_Empty");
+
+                Invoke("EmptySoundDelay", 0.5f);
+            }
+
+            return false;
         }
         else
         {
-            return false;
+            if (bulletSlot.LoadedBullet != bulletSlot.MagazineCapacity)
+            {
+                int needed = bulletSlot.MagazineCapacity - bulletSlot.LoadedBullet;
+                int toLoad = Mathf.Min(needed, bulletSlot.ReserveBullet);
+
+                bulletSlot.LoadedBullet  += toLoad;
+                bulletSlot.ReserveBullet -= toLoad;
+
+                JEventManager.SendEvent(new BulletCountChangeEvent(bulletSlot.LoadedBullet, bulletSlot.ReserveBullet, e.ReloadDelay));
+                JAudioManager.Instance.PlaySFX("Rifle_Reload");
+
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
     }
     #endregion
@@ -79,5 +111,9 @@ public class Rifle : RangedWeapon
 
 
     #region FUNCTIONS
+    private void EmptySoundDelay()
+    {
+        _emptyInterval = false;
+    }
     #endregion
 }

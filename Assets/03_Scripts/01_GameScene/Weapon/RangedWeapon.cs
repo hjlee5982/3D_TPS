@@ -4,10 +4,7 @@ using UnityEngine;
 
 public abstract class RangedWeapon : Weapon
 {
-    public    int MaxBulletCount      = 30; // ÃÖ´ë ÅºÃ¢
-    protected int _currentBulletCount = 30; // ÇöÀç ÅºÃ¢
-
-    public abstract bool Shot(BulletSO bulletPrefab, ShotEvent e);
-    public abstract bool Reload(ReloadEvent e);
+    public abstract bool Shot  (BulletSlotDesc bulletSlot, ShotEvent   e);
+    public abstract bool Reload(BulletSlotDesc bulletSlot, ReloadEvent e);
 
 }

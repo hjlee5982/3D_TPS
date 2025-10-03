@@ -51,12 +51,12 @@ public class UI_BulletSlot : JBaseClass
 
     private void OnEnable()
     {
-        JEventManager.Subscribe<BulletChangeEvent>(OnBulletChanged);
+        JEventManager.Subscribe<BulletSlotChangeEvent>(OnBulletChanged);
     }
 
     private void OnDisable()
     {
-        JEventManager.Unsubscribe<BulletChangeEvent>(OnBulletChanged);
+        JEventManager.Unsubscribe<BulletSlotChangeEvent>(OnBulletChanged);
     }
     #endregion
 
@@ -65,17 +65,24 @@ public class UI_BulletSlot : JBaseClass
 
 
     #region FUNCTIONS
-    private bool OnBulletChanged(BulletChangeEvent e)
+    private bool OnBulletChanged(BulletSlotChangeEvent e)
     {
         for(int i = 0; i < _slots.Count; ++i)
         {
-            if(e.Slot == i)
+            if(e.CurrentSlotIndex == i)
             {
                 _slots[i].color = Color.red;
             }
-            else
+            else 
             {
-                _slots[i].color = Color.black;
+                if (e.BulletSlot[i].IsOccupied == true)
+                {
+                    _slots[i].color = Color.black;
+                }
+                else
+                {
+                    _slots[i].color = new Color32(176, 176, 176, 255);
+                }
             }
         }
 
